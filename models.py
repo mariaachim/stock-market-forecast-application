@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class User(db.Model):
+class Credentials(db.Model):
     __tablename__ = 'Credentials'
     user_id = db.Column(db.Integer, primary_key=True) # user_id is primary key
     username = db.Column(db.String(length=50), nullable=False, unique=True)
@@ -11,7 +11,7 @@ class User(db.Model):
     def __repr__(self): # function for debugging purposes
         return f'<User {self.username}>'
 
-class Company(db.Model):
+class Companies(db.Model):
     __tablename__ = 'Companies'
     company_id = db.Column(db.Integer, primary_key=True) # company_id is primary key
     name = db.Column(db.String(length=50), nullable=False)
@@ -25,14 +25,9 @@ class Company(db.Model):
     
 class Favourites(db.Model):
     __tablename__ = 'Favourites'
+    # composite primary key
     user_id = db.Column(db.Integer, db.ForeignKey('Credentials.user_id'), primary_key=True, nullable=False)
     company_id = db.Column(db.Integer, db.ForeignKey('Companies.company_id'), primary_key=True, nullable=False)
 
     def __repr__(self): # function for debugging purposes
         return f'<Favourites: User {self.user_id}, Company {self.company_id}>'
-    
-def init_db():
-    db.drop_all()
-    db.create_all()
-    db.session.commit()
-    print('Database initialised')
