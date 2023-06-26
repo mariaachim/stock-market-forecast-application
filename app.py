@@ -14,9 +14,11 @@ import os
 load_dotenv()
 username = os.getenv("DBUSER")
 password = os.getenv("DBPASSWORD")
+key = os.getenv("KEY")
 
 app = Flask(__name__) # initialise flask application
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{username}:{password}@127.0.0.1/cs-nea" # database connection
+app.config['SECRET_KEY'] = key
 db.init_app(app) # initialise database
 
 with app.app_context():
@@ -35,15 +37,19 @@ def auth_index():
 def login():
     return render_template('login.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST']) # called when POST request is sent by interaction
 def login_post():
     username = request.form.get('username')
-    password = request.form.get('password')
-    is_user = Credentials.query.filter_by(username=username).first()
-    print(is_user)
+    password = request.form.get('psw')
+    is_user = Credentials.query.filter_by(username=username, password=password).first()
+    print(is_user) # debugging
     if not is_user:
-        flash('Please check login details')
-    return render_template('index.html')
+        flash('Please check login details') # reloads page and shows authentication failed
+    return render_template('index.html') # if user is authenticated, redirect to index page
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 # to run with python -m app
 if __name__ == "__main__":
