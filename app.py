@@ -45,6 +45,7 @@ def login_post():
     print(is_user) # debugging
     if not is_user:
         flash('Please check login details') # reloads page and shows authentication failed
+        return render_template('login.html')
     return render_template('index.html') # if user is authenticated, redirect to index page
 
 @app.route('/register')
