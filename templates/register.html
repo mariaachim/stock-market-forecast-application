@@ -18,5 +18,8 @@
         <button>Register Account</button>
       </div>
     </form>
+    {% for msg in get_flashed_messages() %}
+    <h2>{{ msg }}</h2>
+    {% endfor %}
   </body>
 </html>

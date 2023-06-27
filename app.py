@@ -33,7 +33,7 @@ def index():
 def auth_index():
     return render_template('index.html')
 
-@app.route('/login')
+@app.route('/login') # called when user navigates to login page
 def login():
     return render_template('login.html')
 
@@ -48,9 +48,31 @@ def login_post():
         return render_template('login.html')
     return render_template('index.html') # if user is authenticated, redirect to index page
 
-@app.route('/register')
+@app.route('/register') # called when user navigates to register page
 def register():
     return render_template('register.html')
+
+@app.route('/register', methods=['POST']) # called when POST request is sent by interaction
+def register_post():
+    username = request.form.get('username')
+    password = request.form.get('psw')
+    password_confirmation = request.form.get('psw-confirmation')
+    username_taken = Credentials.query.filter_by(username=username).first()
+    invalid_account = False # boolean variable so that multiple messages can be shown
+    if username_taken: # checking if username is already in database
+        flash('Username is already taken')
+        invalid_account = True
+    elif password != password_confirmation: # checking if passwords are the same
+        flash('Passwords do not match')
+        invalid_account = True
+    if invalid_account == True:
+        return render_template('register.html')
+    else:
+        print("Valid credentials")
+        new_user = Credentials(username=username, password=password) # creating new Credentials object
+        db.session.add(new_user) # adding credentials to database
+        db.session.commit()
+        return render_template('login.html') # if account has been created
 
 # to run with python -m app
 if __name__ == "__main__":
