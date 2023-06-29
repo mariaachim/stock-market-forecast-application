@@ -58,21 +58,20 @@ def register_post():
     password = request.form.get('psw')
     password_confirmation = request.form.get('psw-confirmation')
     username_taken = Credentials.query.filter_by(username=username).first()
-    invalid_account = False # boolean variable so that multiple messages can be shown
-    if username_taken: # checking if username is already in database
+    if username_taken and password != password_confirmation: # checking if username is already in database and passwords are not the same
+        flash('Username is already taken and passwords do not match')
+    elif username_taken: # checking if username is already in database
         flash('Username is already taken')
-        invalid_account = True
-    elif password != password_confirmation: # checking if passwords are the same
+    elif password != password_confirmation: # checking if passwords are not the same
         flash('Passwords do not match')
-        invalid_account = True
-    if invalid_account == True:
-        return render_template('register.html')
     else:
         print("Valid credentials")
         new_user = Credentials(username=username, password=password) # creating new Credentials object
         db.session.add(new_user) # adding credentials to database
         db.session.commit()
+        flash('Account created')
         return render_template('login.html') # if account has been created
+    return render_template('register.html')    
 
 # to run with python -m app
 if __name__ == "__main__":
