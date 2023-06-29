@@ -12,12 +12,12 @@ import os
 
 # loading environmental variables so i don't push credentials to github
 load_dotenv()
-username = os.getenv("DBUSER")
-password = os.getenv("DBPASSWORD")
+dbusername = os.getenv("DBUSER")
+dbpassword = os.getenv("DBPASSWORD")
 key = os.getenv("KEY")
 
 app = Flask(__name__) # initialise flask application
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{username}:{password}@127.0.0.1/cs-nea" # database connection
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{dbusername}:{dbpassword}@127.0.0.1/cs-nea" # database connection
 app.config['SECRET_KEY'] = key
 db.init_app(app) # initialise database
 
