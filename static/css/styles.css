@@ -1,0 +1,32 @@
+body {
+  background-color: #B7EDFE;
+  font-family: Arial;
+}
+
+.container {
+  margin: auto;
+  margin-top: 10rem;
+  text-align: center;
+  width: 30%;
+  height: 20%;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background-color: #47AAB4;
+}
+
+.header {
+  margin: auto;
+  margin-top: 1.25rem;
+  text-align: center;
+  width: 70%;
+  border-radius: 1rem;
+  background-color: #B7EDFE;
+}
+
+input {
+  margin-top: 1.25rem;
+}
+
+button {
+  margin-top: 1.25rem;
+}

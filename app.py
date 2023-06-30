@@ -42,7 +42,6 @@ def login_post():
     username = request.form.get('username')
     password = request.form.get('psw')
     is_user = Credentials.query.filter_by(username=username, password=password).first()
-    print(is_user) # debugging
     if not is_user:
         flash('Please check login details') # reloads page and shows authentication failed
         return render_template('login.html')
