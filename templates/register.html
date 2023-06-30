@@ -7,18 +7,20 @@
     <title>Register</title>
   </head>
   <body>
-    <form method="POST", action="/register">
-      <div class="container">
-        <h1>Register</h1>
+    <div class="container">
+      <form method="POST", action="/register">
+        <h1 class="header">Register</h1> <!-- for header styling -->
         <input type="text" placeholder="Enter Username" name="username" required>
         <br/>
         <input type="password" placeholder="Enter Password" name="psw" required>
         <br/>
         <input type="password" placeholder="Confirm Password" name="psw-confirmation" required>
         <br/>
-        <button>Register Account</button>
-      </div>
-    </form>
+        <form action="/login "> <!-- to add button styling -->
+          <input type="submit" value="Register Account" />
+        </form>
+      </form>
+    </div>
     {% for msg in get_flashed_messages() %}
     <h2>{{ msg }}</h2>
     {% endfor %}
