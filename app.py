@@ -20,23 +20,22 @@ key = os.getenv("KEY")
 app = Flask(__name__) # initialise flask application
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{dbusername}:{dbpassword}@127.0.0.1/cs-nea" # database connection
 app.config.update(
-    SESSION_TYPE='filesystem',
+    SESSION_TYPE='filesystem', # session files are stored inside flask_session local directory
     SECRET_KEY=key
 )
-Session(app)
+Session(app) # initialise session
 db.init_app(app) # initialise database
 
 with app.app_context():
     db.create_all() # creates database if it doesn't exist already
     db.session.commit()
 
-# show login page automatically
 @app.route('/')
 def index():
-    if 'user' in session:
+    if 'user' in session: # if session is created
         return render_template('index.html')
-    else:
-        return redirect(url_for('login'))
+    else: # to redirect user to login page so session can be created
+        return redirect(url_for('login')) # GET request
 
 def auth_index():
     return render_template('index.html')
@@ -45,7 +44,7 @@ def auth_index():
 def login():
     return render_template('login.html')
 
-@app.route('/login', methods=['GET', 'POST']) # called when POST request is sent by interaction
+@app.route('/login', methods=['GET', 'POST'])
 def login_post():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -55,12 +54,10 @@ def login_post():
             flash('Please check login details') # reloads page and shows authentication failed
             return render_template('login.html')
         else:
-            session['user'] = request.form.get('username')
-            session['passwd'] = request.form.get('psw')
+            session['user'] = request.form.get('username') # only store username in session data
             return redirect(url_for('index')) # if user is authenticated, redirect to index page
     else:
         return render_template('login.html')
-# TODO redirects to /login when authenticated but with index.html
 
 @app.route('/register') # called when user navigates to register page
 def register():
