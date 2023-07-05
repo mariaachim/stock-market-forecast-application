@@ -36,6 +36,13 @@ body {
   background-color: #47AAB4;
 }
 
+.error {
+  margin: auto;
+  margin-top: 2%;
+  text-align: center;
+  color: red;
+}
+
 input {
   margin-top: 5%;
 }

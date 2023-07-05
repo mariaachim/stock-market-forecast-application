@@ -21,8 +21,8 @@
         </form>
       </form>
     </div>
-    {% for msg in get_flashed_messages() %}
-    <h2>{{ msg }}</h2>
+    {% for category, msg in get_flashed_messages(with_categories=true) %}
+    <h2 class="{{ category }}">{{ msg }}</h2>
     {% endfor %}
   </body>
 </html>

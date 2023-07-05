@@ -51,7 +51,7 @@ def login_post():
         password = request.form.get('psw')
         is_user = Credentials.query.filter_by(username=username, password=password).first()
         if not is_user:
-            flash('Please check login details') # reloads page and shows authentication failed
+            flash('Please check login details', 'error') # reloads page and shows authentication failed
             return render_template('login.html')
         else:
             session['user'] = request.form.get('username') # only store username in session data
@@ -70,17 +70,17 @@ def register_post():
     password_confirmation = request.form.get('psw-confirmation')
     username_taken = Credentials.query.filter_by(username=username).first()
     if username_taken and password != password_confirmation: # checking if username is already in database and passwords are not the same
-        flash('Username is already taken and passwords do not match')
+        flash('Username is already taken and passwords do not match', 'error')
     elif username_taken: # checking if username is already in database
-        flash('Username is already taken')
+        flash('Username is already taken', 'error')
     elif password != password_confirmation: # checking if passwords are not the same
-        flash('Passwords do not match')
+        flash('Passwords do not match', 'error')
     else:
         print("Valid credentials")
         new_user = Credentials(username=username, password=password) # creating new Credentials object
         db.session.add(new_user) # adding credentials to database
         db.session.commit()
-        flash('Account created')
+        flash('Account created', 'error')
         return render_template('login.html') # if account has been created
     return render_template('register.html')    
 
