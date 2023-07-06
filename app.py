@@ -4,7 +4,9 @@
 
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 from flask_session import Session
-from models import db, Credentials # local import from models.py
+from models import db, Credentials, Companies # local import from models.py
+
+from numpy import genfromtxt # for reading CSV file
 
 from dotenv import load_dotenv # to handle environment variables
 
@@ -27,8 +29,21 @@ Session(app) # initialise session
 db.init_app(app) # initialise database
 
 with app.app_context():
+    # create list of tuples from reading CSV file contents
+    data = genfromtxt('companies.csv', delimiter=',', skip_header=1, converters={0: lambda n: int(n), 1: lambda s: str(s.decode()), 2: lambda s: str(s.decode()), 3: lambda s: str(s.decode()), 4: lambda n: int(n), 5: lambda n: int(n)}).tolist()
     db.create_all() # creates database if it doesn't exist already
-    db.session.commit()
+    for i in range(len(data)): # iterate over tuples in lists and creates Companies object
+        company = Companies()
+        company.company_id = data[i][0]
+        company.name = data[i][1]
+        company.industry = data[i][2]
+        company.ceo = data[i][3]
+        company.year_founded = data[i][4]
+        company.num_employees = data[i][5]
+        is_in_db = Companies.query.filter_by(company_id=company.company_id).first() # check if line already in table
+        if not is_in_db:
+            db.session.add(company) # adds data to Companies table
+    db.session.commit() # makes changes persist
 
 @app.route('/')
 def index():
