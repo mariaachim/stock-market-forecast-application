@@ -99,6 +99,10 @@ def register_post():
         return render_template('login.html') # if account has been created
     return render_template('register.html')    
 
+@app.route('/stocks')
+def stocks():
+    return render_template('stocks.html')
+
 # to run with python -m app
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)
