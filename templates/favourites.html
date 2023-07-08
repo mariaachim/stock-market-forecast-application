@@ -4,23 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="static/css/styles.css">
-  <title>Stocks</title>
+  <title>Favourites</title>
 </head>
 <body>
-  <h1 class="title">Stocks</h1>
+  <h1 class="title">Favourites</h1>
   <div class="sidebar-nav">
     <ul>
       <li><a href="/">Home</a></li>
-      <li><a href="/stocks" class="active">Stocks</a></li>
+      <li><a href="/stocks">Stocks</a></li>
       <li><a href="/news">News</a></li>
-      <li><a href="/favourites">Favourites</a></li>
+      <li><a href="/favourites" class="active">Favourites</a></li>
     </ul>
-  </div>
-
-  <div class="stocks">
-    {% for company_id in query %}
-    <button type="button" class="stocks-buttons">{{ company_id.name }}</button>
-    {% endfor %}
   </div>
 </body>
 </html>

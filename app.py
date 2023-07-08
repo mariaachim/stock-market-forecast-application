@@ -99,9 +99,17 @@ def register_post():
         return render_template('login.html') # if account has been created
     return render_template('register.html')    
 
-@app.route('/stocks')
+@app.route('/stocks', methods=["GET", "POST"])
 def stocks():
-    return render_template('stocks.html')
+    return render_template('stocks.html', query=Companies.query.all())
+
+@app.route('/news')
+def news():
+    return render_template('news.html')
+
+@app.route('/favourites')
+def favourites():
+    return render_template('favourites.html')
 
 # to run with python -m app
 if __name__ == "__main__":
