@@ -18,9 +18,11 @@
   </div>
 
   <div class="stocks">
-    {% for company_id in query %}
-    <button type="button" class="stocks-buttons">{{ company_id.name }}</button>
-    {% endfor %}
+    <form method="POST" action="/stocks">
+      {% for company_id in query %}
+      <input type="submit" name="{{ company_id.name }}" value="{{ company_id.name }}">
+      {% endfor %}
+    </form>
   </div>
 </body>
 </html>

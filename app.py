@@ -7,6 +7,7 @@ from flask_session import Session
 from models import db, Credentials, Companies # local import from models.py
 
 from numpy import genfromtxt # for reading CSV file
+import itertools # for converting database record to dictionary
 
 from dotenv import load_dotenv # to handle environment variables
 
@@ -52,9 +53,6 @@ def index():
     else: # to redirect user to login page so session can be created
         return redirect(url_for('login')) # GET request
 
-def auth_index():
-    return render_template('index.html')
-
 @app.route('/login') # called when user navigates to login page
 def login():
     return render_template('login.html')
@@ -99,9 +97,18 @@ def register_post():
         return render_template('login.html') # if account has been created
     return render_template('register.html')    
 
-@app.route('/stocks', methods=["GET", "POST"])
+@app.route('/stocks', methods=['GET', 'POST'])
 def stocks():
-    return render_template('stocks.html', query=Companies.query.all())
+    if request.method == 'POST':
+        print(list(request.form.keys())[0])
+        details = Companies.query.filter_by(name=list(request.form.keys())[0]).first()
+        record = []
+        for i in list(vars(details).items()):
+            if i[0] != "_sa_instance_state":
+                record.append(i)
+        print(record)
+    else:
+        return render_template('stocks.html', query=Companies.query.all())
 
 @app.route('/news')
 def news():
