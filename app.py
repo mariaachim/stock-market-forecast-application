@@ -7,8 +7,6 @@ from flask_session import Session
 from models import db, Credentials, Companies # local import from models.py
 
 from numpy import genfromtxt # for reading CSV file
-import itertools # for converting database record to dictionary
-
 from dotenv import load_dotenv # to handle environment variables
 
 # standard libraries
@@ -106,7 +104,8 @@ def stocks():
         for i in list(vars(details).items()):
             if i[0] != "_sa_instance_state":
                 record.append(i)
-        print(record)
+        print(dict(record))
+        return render_template('details.html', details=dict(record))
     else:
         return render_template('stocks.html', query=Companies.query.all())
 

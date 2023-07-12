@@ -3,9 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="static/css/styles.css">
   <title>{{ details['name'] }}</title>
 </head>
 <body>
-  
+  <h1 class="title">{{ details['name'] }}</h1>
+  <div class="sidebar-nav">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/stocks" class="active">Stocks</a></li>
+      <li><a href="/news">News</a></li>
+      <li><a href="/favourites">Favourites</a></li>
+    </ul>
+  </div>
+
+  <div class="details">
+    <h2>Name: {{ details['name'] }}</h2>
+    <h2>Industry: {{ details['industry'] }}</h2>
+    <h2>CEO: {{ details['ceo'] }}</h2>
+    <h2>Year Founded: {{ details['year_founded'] }}</h2>
+    <h2># Employees: {{ details['num_employees'] }}</h2>
+  </div>
+
 </body>
 </html>
