@@ -97,17 +97,15 @@ def register_post():
 
 @app.route('/stocks', methods=['GET', 'POST'])
 def stocks():
-    if request.method == 'POST':
-        print(list(request.form.keys())[0])
-        details = Companies.query.filter_by(name=list(request.form.keys())[0]).first()
+    if request.method == 'POST': # run when button is pressed
+        details = Companies.query.filter_by(name=list(request.form.keys())[0]).first() # gets record based on name of company
         record = []
-        for i in list(vars(details).items()):
-            if i[0] != "_sa_instance_state":
-                record.append(i)
-        print(dict(record))
-        return render_template('details.html', details=dict(record))
-    else:
-        return render_template('stocks.html', query=Companies.query.all())
+        for i in list(vars(details).items()): # list of tuples
+            if i[0] != "_sa_instance_state": # removes unnecessary attribute
+                record.append(i) # adds tuple to record list
+        return render_template('details.html', details=dict(record)) # converts record to dictionary so key-value pairs can be used in the template
+    else: # run when /stocks page is rendered first
+        return render_template('stocks.html', query=Companies.query.all()) # records in companies database is processed by stocks.html
 
 @app.route('/news')
 def news():
