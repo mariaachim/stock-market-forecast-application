@@ -2,6 +2,8 @@
 # Written by Maria Achim
 # Started on 22nd June 2023
 
+from forms import test
+
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 from flask_session import Session
 from models import db, Credentials, Companies # local import from models.py
@@ -43,6 +45,7 @@ with app.app_context():
         if not is_in_db:
             db.session.add(company) # adds data to Companies table
     db.session.commit() # makes changes persist
+    test()
 
 @app.route('/')
 def index():
@@ -98,6 +101,7 @@ def register_post():
 @app.route('/stocks', methods=['GET', 'POST'])
 def stocks():
     if request.method == 'POST': # run when button is pressed
+
         details = Companies.query.filter_by(name=list(request.form.keys())[0]).first() # gets record based on name of company
         record = []
         for i in list(vars(details).items()): # list of tuples
