@@ -15,6 +15,7 @@ class Companies(db.Model):
     __tablename__ = 'Companies'
     company_id = db.Column(db.Integer, primary_key=True) # company_id is primary key
     name = db.Column(db.String(length=50), nullable=False)
+    mic = db.Column(db.String(length=4), nullable=False)
     industry = db.Column(db.String(length=50), nullable=False)
     ceo = db.Column(db.String(length=50), nullable=False)
     year_founded = db.Column(db.Integer, nullable=False)

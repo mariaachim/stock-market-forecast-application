@@ -2,10 +2,12 @@
 # Written by Maria Achim
 # Started on 22nd June 2023
 
-from forms import test
-
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 from flask_session import Session
+
+import yfinance as yf
+
+#from forms import StocksSearchForm # NEW!!!!
 from models import db, Credentials, Companies # local import from models.py
 
 from numpy import genfromtxt # for reading CSV file
@@ -31,21 +33,21 @@ db.init_app(app) # initialise database
 
 with app.app_context():
     # create list of tuples from reading CSV file contents
-    data = genfromtxt('companies.csv', delimiter=',', skip_header=1, converters={0: lambda n: int(n), 1: lambda s: str(s.decode()), 2: lambda s: str(s.decode()), 3: lambda s: str(s.decode()), 4: lambda n: int(n), 5: lambda n: int(n)}).tolist()
+    data = genfromtxt('companies.csv', delimiter=',', skip_header=1, converters={0: lambda n: int(n), 1: lambda s: str(s.decode()), 2: lambda s: str(s.decode()), 3: lambda s: str(s.decode()), 4: lambda s: str(s.decode()), 5: lambda n: int(n), 6: lambda n: int(n)}).tolist()
     db.create_all() # creates database if it doesn't exist already
     for i in range(len(data)): # iterate over tuples in lists and creates Companies object
         company = Companies()
         company.company_id = data[i][0]
         company.name = data[i][1]
-        company.industry = data[i][2]
-        company.ceo = data[i][3]
-        company.year_founded = data[i][4]
-        company.num_employees = data[i][5]
+        company.mic = data[i][2]
+        company.industry = data[i][3]
+        company.ceo = data[i][4]
+        company.year_founded = data[i][5]
+        company.num_employees = data[i][6]
         is_in_db = Companies.query.filter_by(company_id=company.company_id).first() # check if line already in table
         if not is_in_db:
             db.session.add(company) # adds data to Companies table
     db.session.commit() # makes changes persist
-    test()
 
 @app.route('/')
 def index():
@@ -61,6 +63,7 @@ def login():
 @app.route('/login', methods=['GET', 'POST'])
 def login_post():
     if request.method == 'POST':
+        #search = StocksSearchForm(request.form) # NEW!!!!
         username = request.form.get('username')
         password = request.form.get('psw')
         is_user = Credentials.query.filter_by(username=username, password=password).first()
@@ -101,12 +104,12 @@ def register_post():
 @app.route('/stocks', methods=['GET', 'POST'])
 def stocks():
     if request.method == 'POST': # run when button is pressed
-
         details = Companies.query.filter_by(name=list(request.form.keys())[0]).first() # gets record based on name of company
         record = []
         for i in list(vars(details).items()): # list of tuples
             if i[0] != "_sa_instance_state": # removes unnecessary attribute
                 record.append(i) # adds tuple to record list
+        data = yf.Ticker("")
         return render_template('details.html', details=dict(record)) # converts record to dictionary so key-value pairs can be used in the template
     else: # run when /stocks page is rendered first
         return render_template('stocks.html', query=Companies.query.all()) # records in companies database is processed by stocks.html
