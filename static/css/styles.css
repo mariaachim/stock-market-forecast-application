@@ -107,3 +107,10 @@ li a.active {
 .details {
   margin-left: 20%;
 }
+
+button[type=button] {
+  margin-left: 20%;
+  border-radius: 0;
+  padding: 2%;
+  width: 20%;
+}

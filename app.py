@@ -28,6 +28,7 @@ app.config.update(
     SESSION_TYPE='filesystem', # session files are stored inside flask_session local directory
     SECRET_KEY=key
 )
+
 Session(app) # initialise session
 db.init_app(app) # initialise database
 
@@ -49,6 +50,8 @@ with app.app_context():
             db.session.add(company) # adds data to Companies table
     db.session.commit() # makes changes persist
 
+favourites = []
+
 @app.route('/')
 def index():
     if 'user' in session: # if session is created
@@ -63,7 +66,6 @@ def login():
 @app.route('/login', methods=['GET', 'POST'])
 def login_post():
     if request.method == 'POST':
-        #search = StocksSearchForm(request.form) # NEW!!!!
         username = request.form.get('username')
         password = request.form.get('psw')
         is_user = Credentials.query.filter_by(username=username, password=password).first()
@@ -72,6 +74,7 @@ def login_post():
             return render_template('login.html')
         else:
             session['user'] = request.form.get('username') # only store username in session data
+            session['userID'] = is_user.user_id # store user_id so new record to Favourites table can be created
             return redirect(url_for('index')) # if user is authenticated, redirect to index page
     else:
         return render_template('login.html')
@@ -109,10 +112,13 @@ def stocks():
         for i in list(vars(details).items()): # list of tuples
             if i[0] != "_sa_instance_state": # removes unnecessary attribute
                 record.append(i) # adds tuple to record list
-        data = yf.Ticker("")
-        return render_template('details.html', details=dict(record)) # converts record to dictionary so key-value pairs can be used in the template
+        print(dict(record))
+        #data = yf.Ticker(dict(record)['mic'])
+        return render_template('details.html', details=dict(record), userID=session['userID']) # converts record to dictionary so key-value pairs can be used in the template
     else: # run when /stocks page is rendered first
         return render_template('stocks.html', query=Companies.query.all()) # records in companies database is processed by stocks.html
+
+
 
 @app.route('/news')
 def news():

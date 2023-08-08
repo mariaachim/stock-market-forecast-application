@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="static/css/styles.css">
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <script src="static/js/script.js"></script>
   <title>{{ details['name'] }}</title>
 </head>
 <body>
@@ -25,6 +26,8 @@
     <h2>Year Founded: {{ details['year_founded'] }}</h2>
     <h2># Employees: {{ details['num_employees'] }}</h2>
   </div>
+
+  <button type="button" onclick="sendRequest({{ details['company_id'] }}, {{ userID }})">Add to Favourites</button>
 
 </body>
 </html>
