@@ -118,7 +118,11 @@ def stocks():
     else: # run when /stocks page is rendered first
         return render_template('stocks.html', query=Companies.query.all()) # records in companies database is processed by stocks.html
 
-
+@app.route('/stockfavourites', methods=['POST'])
+def stockfavourites():
+    data = request.get_json() # get JSON-parsed data from POST request
+    print(data) # for debugging purposes
+    return data
 
 @app.route('/news')
 def news():
