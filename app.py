@@ -8,7 +8,7 @@ from flask_session import Session
 import yfinance as yf
 
 #from forms import StocksSearchForm # NEW!!!!
-from models import db, Credentials, Companies # local import from models.py
+from models import db, Credentials, Companies, Favourites # local import from models.py
 
 from numpy import genfromtxt # for reading CSV file
 from dotenv import load_dotenv # to handle environment variables
@@ -69,6 +69,7 @@ def login_post():
         username = request.form.get('username')
         password = request.form.get('psw')
         is_user = Credentials.query.filter_by(username=username, password=password).first()
+        print(is_user)
         if not is_user:
             flash('Please check login details', 'error') # reloads page and shows authentication failed
             return render_template('login.html')
@@ -122,6 +123,14 @@ def stocks():
 def stockfavourites():
     data = request.get_json() # get JSON-parsed data from POST request
     print(data) # for debugging purposes
+    is_favourite = Favourites.query.filter_by(user_id=data['userID'], company_id=data['companyID']).first()
+    if not is_favourite: # check if already in favourites
+        new_favourite = Favourites(user_id=data['userID'], company_id=data['companyID'])
+        db.session.add(new_favourite)
+        db.session.commit()
+        print("favourite added")
+    else:
+        print("already in favourites")
     return data
 
 @app.route('/news')
