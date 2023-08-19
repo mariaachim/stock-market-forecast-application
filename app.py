@@ -126,13 +126,15 @@ def stockfavourites():
     is_favourite = Favourites.query.filter_by(user_id=data['userID'], company_id=data['companyID']).first()
     if not is_favourite: # check if already in favourites
         new_favourite = Favourites(user_id=data['userID'], company_id=data['companyID'])
-        db.session.add(new_favourite)
-        db.session.commit()
+        db.session.add(new_favourite) # add entry to database
+        db.session.commit() # data persists
         print("favourite added")
+        flash('Added to Favourites', 'error')
+        return {'code': 'success'} # server responds with success
     else:
         print("already in favourites")
-    return data
-
+        return {'code': 'error'} # server responds with error
+    
 @app.route('/news')
 def news():
     return render_template('news.html')

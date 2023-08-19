@@ -15,11 +15,7 @@ async function sendRequest(companyID, userID) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(obj) // parses data to JSON
   })
-    .then(response => {
-      console.log("success");
-    })
-    .catch(error => { // error handling
-      console.log("fail");
-    });
-  return await resp.json()
+  await resp.json().then(result => {
+    console.log(result);
+  })
 }
