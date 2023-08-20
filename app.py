@@ -129,11 +129,10 @@ def stockfavourites():
         db.session.add(new_favourite) # add entry to database
         db.session.commit() # data persists
         print("favourite added")
-        return {'msg': 'Added to Favourites'} # server responds with success
+        return {'msg': 'Added to Favourites'}
     else:
         print("already in favourites")
-        flash('Already in favourites', 'error')
-        return {'msg': 'Already in Favourites'} # server responds with error
+        return {'msg': 'Already in Favourites'}
     
 @app.route('/news')
 def news():
