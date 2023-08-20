@@ -17,5 +17,6 @@ async function sendRequest(companyID, userID) {
   })
   await resp.json().then(result => {
     console.log(result);
+    document.getElementById('msg').innerHTML = result.msg;
   })
 }

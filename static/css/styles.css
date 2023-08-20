@@ -43,6 +43,13 @@ body {
   color: red;
 }
 
+#msg {
+  margin: auto;
+  margin-left: 21%;
+  margin-top: 2%;
+  color: red;
+}
+
 input {
   margin-top: 5%;
 }

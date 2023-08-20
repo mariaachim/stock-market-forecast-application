@@ -2,7 +2,7 @@
 # Written by Maria Achim
 # Started on 22nd June 2023
 
-from flask import Flask, render_template, redirect, url_for, request, flash, session
+from flask import Flask, render_template, redirect, url_for, request, flash, get_flashed_messages, session
 from flask_session import Session
 
 import yfinance as yf
@@ -129,11 +129,11 @@ def stockfavourites():
         db.session.add(new_favourite) # add entry to database
         db.session.commit() # data persists
         print("favourite added")
-        flash('Added to Favourites', 'error')
-        return {'code': 'success'} # server responds with success
+        return {'msg': 'Added to Favourites'} # server responds with success
     else:
         print("already in favourites")
-        return {'code': 'error'} # server responds with error
+        flash('Already in favourites', 'error')
+        return {'msg': 'Already in Favourites'} # server responds with error
     
 @app.route('/news')
 def news():

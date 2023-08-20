@@ -26,12 +26,10 @@
     <h2>Year Founded: {{ details['year_founded'] }}</h2>
     <h2># Employees: {{ details['num_employees'] }}</h2>
   </div>
-
-  {% for category, msg in get_flashed_messages(with_categories=true) %}
-  <h2 class="{{ category }}">{{ msg }}</h2>
-  {% endfor %}
   
   <button type="button" onclick="sendRequest({{ details['company_id'] }}, {{ userID }})">Add to Favourites</button>
+
+  <h2 id="msg"></h2>
 
 </body>
 </html>
