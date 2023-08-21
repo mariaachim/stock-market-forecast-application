@@ -8,6 +8,7 @@
   <title>Favourites</title>
 </head>
 <body>
+
   <h1 class="title">Favourites</h1>
   <div class="sidebar-nav">
     <ul>
@@ -17,5 +18,14 @@
       <li><a href="/favourites" class="active">Favourites</a></li>
     </ul>
   </div>
+
+  <div class="favourites">
+    <ul>
+      {% for favourite in query %}
+      <li>{{ favourite }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
 </body>
 </html>

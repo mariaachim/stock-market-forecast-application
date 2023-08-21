@@ -140,7 +140,11 @@ def news():
 
 @app.route('/favourites')
 def favourites():
-    return render_template('favourites.html')
+    results = db.session.query(Companies, Favourites).join(Favourites).filter(Favourites.user_id==session['userID']).all()
+    favourites_names = []
+    for company in results:
+        favourites_names.append(company[0].name)
+    return render_template('favourites.html', query=favourites_names)
 
 # to run with python -m app
 if __name__ == "__main__":

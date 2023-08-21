@@ -111,6 +111,12 @@ li a.active {
   width: 20%;
 }
 
+.favourites {
+  position: absolute;
+  width: auto;
+  left: 50%;
+}
+
 .details {
   margin-left: 20%;
 }
