@@ -117,6 +117,12 @@ li a.active {
   left: 50%;
 }
 
+.favourite-list-item {
+  background-color: #065961;
+  height: 50px;
+  padding: 4% 8%;
+}
+
 .details {
   margin-left: 20%;
 }

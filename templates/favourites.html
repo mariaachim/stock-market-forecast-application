@@ -20,11 +20,9 @@
   </div>
 
   <div class="favourites">
-    <ul>
-      {% for favourite in query %}
-      <li>{{ favourite }}</li>
-      {% endfor %}
-    </ul>
+    {% for favourite in query %}
+    <p class="favourite-list-item">{{ favourite }}</p>
+    {% endfor %}
   </div>
 
 </body>

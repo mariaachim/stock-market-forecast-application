@@ -140,11 +140,12 @@ def news():
 
 @app.route('/favourites')
 def favourites():
+    # SQL query to find Companies with corresponding entry in Favourites using join statement
     results = db.session.query(Companies, Favourites).join(Favourites).filter(Favourites.user_id==session['userID']).all()
     favourites_names = []
     for company in results:
-        favourites_names.append(company[0].name)
-    return render_template('favourites.html', query=favourites_names)
+        favourites_names.append(company[0].name) # adding company names from query results
+    return render_template('favourites.html', query=favourites_names) # rendering template with company names list
 
 # to run with python -m app
 if __name__ == "__main__":
