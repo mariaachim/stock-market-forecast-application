@@ -1,18 +1,20 @@
 import yfinance as yf
 import plotly.graph_objects as go
-import pandas as pd
 
-aapl = yf.Ticker("aapl")
+option = "AAPL" # hardcoded variable for stock
+aapl = yf.Ticker(option) # stock symbol that descibes information about company stock
 
-aapl_historical = aapl.history(period='5d', interval='15m', rounding=True)
+aapl_historical = aapl.history(period='7d', interval='15m', rounding=True) # getting data from the past 7 days every 15 mins
 
 fig = go.Figure()
-fig.add_trace(go.Candlestick(x=aapl_historical.index,
-                open=aapl_historical.Open,
-                high=aapl_historical.High,
-                low=aapl_historical.Low,
-                close=aapl_historical.Close))
-fig.update_xaxes(
+fig.add_trace(go.Candlestick(x=aapl_historical.index, # candlestick chart - typically used for stocks
+                open=aapl_historical['Open'],
+                high=aapl_historical['High'],
+                low=aapl_historical['Low'],
+                close=aapl_historical['Close'],
+                name='market data'))
+fig.update_layout(title = option + " share price", yaxis_title='Stock Price') # setting axis label and title
+fig.update_xaxes( # ability to select different time ranges
     rangeslider_visible=True,
     rangeselector=dict(
         buttons=list([
