@@ -1,3 +1,5 @@
+# for searching and filtering
+
 from models import Companies
 from wtforms import Form, StringField, SelectField
 from flask_sqlalchemy import SQLAlchemy

@@ -5,10 +5,9 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, get_flashed_messages, session
 from flask_session import Session
 
-import yfinance as yf
-
 #from forms import StocksSearchForm # NEW!!!!
 from models import db, Credentials, Companies, Favourites # local import from models.py
+import graphs
 
 from numpy import genfromtxt # for reading CSV file
 from dotenv import load_dotenv # to handle environment variables
@@ -114,7 +113,8 @@ def stocks():
             if i[0] != "_sa_instance_state": # removes unnecessary attribute
                 record.append(i) # adds tuple to record list
         print(dict(record))
-        #data = yf.Ticker(dict(record)['mic'])
+        # get name of option from dict(record)['mic']
+        graphs.show_graph(dict(record)['mic'])
         return render_template('details.html', details=dict(record), userID=session['userID']) # converts record to dictionary so key-value pairs can be used in the template
     else: # run when /stocks page is rendered first
         return render_template('stocks.html', query=Companies.query.all()) # records in companies database is processed by stocks.html
