@@ -1,5 +1,7 @@
 import yfinance as yf
 import plotly.graph_objects as go
+import plotly
+import json
 
 def show_graph(option): # function to draw graph of historical stock prices with given stock and time period
     ticker = yf.Ticker(option)
@@ -25,4 +27,5 @@ def show_graph(option): # function to draw graph of historical stock prices with
             ])
         )
     )
-    fig.show()
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON

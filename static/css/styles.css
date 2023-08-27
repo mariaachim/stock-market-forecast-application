@@ -133,3 +133,13 @@ button[type=button] {
   padding: 2%;
   width: 20%;
 }
+
+.chart {
+  margin-left: 50%;
+  margin-top: -25%;
+  width: 45%;
+}
+
+#msg {
+  position: absolute;
+}

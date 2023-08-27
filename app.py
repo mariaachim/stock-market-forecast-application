@@ -114,8 +114,8 @@ def stocks():
                 record.append(i) # adds tuple to record list
         print(dict(record))
         # get name of option from dict(record)['mic']
-        graphs.show_graph(dict(record)['mic'])
-        return render_template('details.html', details=dict(record), userID=session['userID']) # converts record to dictionary so key-value pairs can be used in the template
+        graphJSON = graphs.show_graph(dict(record)['mic'])
+        return render_template('details.html', details=dict(record), userID=session['userID'], graph=graphJSON) # converts record to dictionary so key-value pairs can be used in the template
     else: # run when /stocks page is rendered first
         return render_template('stocks.html', query=Companies.query.all()) # records in companies database is processed by stocks.html
 
