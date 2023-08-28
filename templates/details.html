@@ -34,7 +34,7 @@
   <div class="chart" id="chart"></div>
 
   <script>
-    let graphs = {{graph | safe}};
+    let graphs = {{ graph | safe }};
     Plotly.plot('chart', graphs, {});
   </script>
 
