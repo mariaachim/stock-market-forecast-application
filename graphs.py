@@ -6,6 +6,8 @@ import json
 def show_graph(option): # function to draw graph of historical stock prices with given stock and time period
     ticker = yf.Ticker(option)
     historical = ticker.history(period='max', interval='1mo', rounding=True) # all-time stock prices
+    week = ticker.history(period='5d', interval='1h', rounding=True)
+    print(week)
 
     fig = go.Figure()
     fig.add_trace(go.Candlestick(x=historical.index,
@@ -29,3 +31,17 @@ def show_graph(option): # function to draw graph of historical stock prices with
     )
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return graphJSON
+
+def heatmap(option): ## UNFINISHED
+    ticker = yf.Ticker(option)
+    historical = ticker.history(period='max', interval='1mo', rounding=True) # all-time stock prices
+
+    fig = plotly.subplots.make_subplots(rows=3, cols=1)
+    fig.add_trace(go.Candlestick(x=historical.index,
+                                 open=historical['Open'],
+                                 high=historical['High'],
+                                 low=historical['Low'],
+                                 close=historical['Close'],
+                                 name='market data'),
+                row=1, col=1)
+    fig.add_trace(go.Scatter(x=historical.index))
