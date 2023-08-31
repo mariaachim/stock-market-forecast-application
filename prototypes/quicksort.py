@@ -19,9 +19,6 @@ def quicksort(array, low, high):
         quicksort(array, low, pi - 1) # sorts left of pivot point
         quicksort(array, pi + 1, high) # sorts right of pivot point
 
-def test(data): # test function for debugging + unit tests
+def mainSort(data): # main function for quicksort and unit tests
     quicksort(data, 0, len(data) - 1)
     return data
-
-data = [1, 7, 4, 1, 10, 9, 2]
-test(data)
