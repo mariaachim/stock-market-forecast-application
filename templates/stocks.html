@@ -21,8 +21,8 @@
 
   <div class="stocks">
     <form method="POST" action="/stocks">
-      {% for company_id in query %}
-      <input type="submit" name="{{ company_id.name }}" value="{{ company_id.name }}">
+      {% for company in query %}
+      <input type="submit" name="{{ company }}" value="{{ company }}">
       {% endfor %}
     </form>
   </div>

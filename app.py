@@ -8,6 +8,7 @@ from flask_session import Session
 #from forms import StocksSearchForm # NEW!!!!
 from models import db, Credentials, Companies, Favourites # local import from models.py
 import graphs
+from prototypes.quicksort import mainSort
 
 from numpy import genfromtxt # for reading CSV file
 from dotenv import load_dotenv # to handle environment variables
@@ -102,7 +103,7 @@ def register_post():
         db.session.commit()
         flash('Account created', 'error')
         return render_template('login.html') # if account has been created
-    return render_template('register.html')    
+    return render_template('register.html')
 
 @app.route('/stocks', methods=['GET', 'POST'])
 def stocks():
@@ -117,7 +118,12 @@ def stocks():
         graphJSON = graphs.show_graph(dict(record)['mic'])
         return render_template('details.html', details=dict(record), userID=session['userID'], graph=graphJSON) # converts record to dictionary so key-value pairs can be used in the template
     else: # run when /stocks page is rendered first
-        return render_template('stocks.html', query=Companies.query.all()) # records in companies database is processed by stocks.html
+        companyObjects = Companies.query.all() # list of Company objects
+        names = [] # empty names list
+        for i in range(len(companyObjects)): # iterate through Company objects
+            names.append(companyObjects[i].name) # append company name to names list
+        sorted = mainSort(names) # sort names
+        return render_template('stocks.html', query=sorted) # records in companies database is processed by stocks.html
 
 @app.route('/stockfavourites', methods=['POST'])
 def stockfavourites():
@@ -145,6 +151,8 @@ def favourites():
     favourites_names = []
     for company in results:
         favourites_names.append(company[0].name) # adding company names from query results
+    #sorted = mainSort(favourites_names)
+    #print(sorted)
     return render_template('favourites.html', query=favourites_names) # rendering template with company names list
 
 # to run with python -m app

@@ -22,7 +22,7 @@ class Companies(db.Model):
     num_employees = db.Column(db.Integer, nullable=False)
 
     def __repr__(self): # function for debugging purposes
-        return f'<Company {self.name}>'
+        return self.name
     
 class Favourites(db.Model):
     __tablename__ = 'Favourites'
