@@ -151,9 +151,8 @@ def favourites():
     favourites_names = []
     for company in results:
         favourites_names.append(company[0].name) # adding company names from query results
-    #sorted = mainSort(favourites_names)
-    #print(sorted)
-    return render_template('favourites.html', query=favourites_names) # rendering template with company names list
+    sorted = mainSort(favourites_names) # sort names
+    return render_template('favourites.html', query=sorted) # rendering template with company names list
 
 # to run with python -m app
 if __name__ == "__main__":

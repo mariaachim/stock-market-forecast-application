@@ -20,9 +20,11 @@
   </div>
 
   <div class="favourites">
-    {% for favourite in query %}
-    <p class="favourite-list-item">{{ favourite }}</p>
-    {% endfor %}
+    <form method="POST" action="/stocks">
+      {% for favourite in query %}
+      <input type="submit" name="{{ favourite }}" value="{{ favourite }}">
+      {% endfor %}
+    </form>
   </div>
 
 </body>

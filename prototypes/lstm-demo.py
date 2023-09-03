@@ -1,69 +1,82 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
+import plotly.graph_objects as go
 import yfinance as yf
+import math
 
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
-from keras.layers import LSTM
-from keras.layers import Dropout
-from keras.layers import Dense
+from sklearn.metrics import mean_absolute_error, mean_squared_error # unused module
 
-# 80% of data for training, 20% of data for testing
+from keras.models import Sequential
+from keras.layers import LSTM, Dense
+
+# preprocessing
 ticker = yf.Ticker('AAPL')
 historical = ticker.history(period='max', interval='1mo', rounding=True)
-print(historical.iloc[0])
-dataset_train = historical.sample(frac=0.8)
-dataset_test = historical.loc[~historical.index.isin(dataset_train.index)]
-training_set = dataset_train.iloc[:, 1:2].values
-testing_set = dataset_test.iloc[:, 1:2].values
+historical.fillna(historical.mean())
+data = historical # for graph
+historical = np.array(historical['Close'])
 
-sc = MinMaxScaler(feature_range=(0,1))
-training_set_scaled = sc.fit_transform(training_set)
+sc = MinMaxScaler(feature_range=(0, 1))
+aapl_scaled = sc.fit_transform(historical.reshape(-1, 1))
+
+# preparing training data
+training_data_len = math.ceil(len(historical) * 0.8)
+train_data = aapl_scaled[0: training_data_len, :]
 
 X_train = []
 y_train = []
 
-for i in range(60, 370):
-    X_train.append(training_set_scaled[i-60:i, 0])
-    y_train.append(training_set_scaled[i, 0])
+for i in range(60, len(train_data)):
+    X_train.append(train_data[i-60:i, 0])
+    y_train.append(train_data[i, 0])
 
 X_train, y_train = np.array(X_train), np.array(y_train)
 X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
 
-model = Sequential()
-model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
-model.add(Dropout(0.2))
-model.add(LSTM(units=50, return_sequences=True))
-model.add(Dropout(0.2))
-model.add(LSTM(units=50, return_sequences=True))
-model.add(Dropout(0.2))
-model.add(LSTM(units=50))
-model.add(Dropout(0.2))
-model.add(Dense(units=1))
-model.compile(optimizer='adam', loss='mean_squared_error')
-model.fit(X_train, y_train, epochs=100, batch_size=32)
-
-total = pd.concat((dataset_train['Open'], dataset_test['Open']), axis=0)
-inputs = total[len(total) - len(testing_set) - 60:].values
-inputs = inputs.reshape(-1,1)
-inputs = sc.transform(inputs)
-
+# preparing testing data
+test_data = aapl_scaled[training_data_len-60:, :]
 X_test = []
+y_test = historical[training_data_len:]
 
-for i in range(60, 140):
-    X_test.append(inputs[i-60:i, 0])
+for i in range(60, len(test_data)):
+    X_test.append(test_data[i-60:i, 0])
 
 X_test = np.array(X_test)
 X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
 
-predicted_stock_price = model.predict(X_test)
-predicted_stock_price = sc.inverse_transform(predicted_stock_price)
+# LSTM architecture
+model = Sequential()
+model.add(LSTM(100, return_sequences=True, input_shape=(X_train.shape[1], 1)))
+model.add(LSTM(100, return_sequences=False))
+model.add(Dense(25))
+model.add(Dense(1))
+model.summary()
 
-plt.plot(testing_set, color='black', label='Stock Price')
-plt.plot(predicted_stock_price, color='green', label='Predicted Stock Price')
-plt.title('Stock Price Prediction')
-plt.xlabel('Time')
-plt.ylabel('Stock Price')
-plt.legend()
-plt.show()
+# training LSTM model
+model.compile(optimizer='adam', loss='mean_squared_error')
+model.fit(X_train, y_train, batch_size=1, epochs=3)
+
+# model predictions
+predictions = model.predict(X_test)
+predictions = sc.inverse_transform(predictions)
+RMSE = np.sqrt(np.mean(predictions - y_test) ** 2)
+print(RMSE)
+
+# graph
+train = data[:training_data_len]
+validation = data[training_data_len:]
+validation['Predictions'] = predictions
+train.reset_index(inplace = True)
+validation.reset_index(inplace = True)
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=train.Date, y=train.Close, mode='lines', name='Actual Price (Training Dataset)'))
+fig.add_trace(go.Scatter(x=validation.Date, y=validation.Close, mode='lines', name='Actual Price'))
+fig.add_trace(go.Scatter(x=validation.Date, y=validation.Predictions, mode='lines', name='Predicted Price'))
+fig.update_layout(
+    title="Time Series Forecasting using LSTM",
+    xaxis_title="Date-Time",
+    yaxis_title="Values",
+    legend_title="Legend",
+)
+fig.show()

@@ -111,16 +111,14 @@ li a.active {
   width: 20%;
 }
 
-.favourites {
-  position: absolute;
-  width: auto;
-  left: 50%;
-}
-
-.favourite-list-item {
-  background-color: #065961;
-  height: 50px;
-  padding: 4% 8%;
+.favourites input[type="submit"] {
+  margin-left: 25%;
+  margin-top: 1%;
+  border-radius: 0;
+  padding: 0;
+  display: inline-block;
+  height: 70px;
+  width: 20%;
 }
 
 .details {
