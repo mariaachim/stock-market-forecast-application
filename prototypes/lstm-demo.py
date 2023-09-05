@@ -1,3 +1,7 @@
+# Script to show LSTM algorithm prototype
+# Written by Maria Achim
+# Started on 2nd September 2023
+
 import numpy as np
 import plotly.graph_objects as go
 import yfinance as yf
