@@ -8,7 +8,7 @@ from flask_session import Session
 #from forms import StocksSearchForm # NEW!!!!
 from models import db, Credentials, Companies, Favourites # local import from models.py
 import graphs
-from prototypes.quicksort import mainSort
+from prototypes.quicksort import main_sort
 
 from numpy import genfromtxt # for reading CSV file
 from dotenv import load_dotenv # to handle environment variables
@@ -115,23 +115,23 @@ def stocks():
                 record.append(i) # adds tuple to record list
         print(dict(record))
         # get name of option from dict(record)['mic']
-        graphJSON = graphs.show_graph(dict(record)['mic'])
-        return render_template('details.html', details=dict(record), userID=session['userID'], graph=graphJSON) # converts record to dictionary so key-value pairs can be used in the template
+        graph_json = graphs.show_graph(dict(record)['mic'])
+        return render_template('details.html', details=dict(record), userID=session['userID'], graph=graph_json) # converts record to dictionary so key-value pairs can be used in the template
     else: # run when /stocks page is rendered first
-        companyObjects = Companies.query.all() # list of Company objects
+        company_objects = Companies.query.all() # list of Company objects
         names = [] # empty names list
-        for i in range(len(companyObjects)): # iterate through Company objects
-            names.append(companyObjects[i].name) # append company name to names list
-        sorted = mainSort(names) # sort names
+        for i in range(len(company_objects)): # iterate through Company objects
+            names.append(company_objects[i].name) # append company name to names list
+        sorted = main_sort(names) # sort names
         return render_template('stocks.html', query=sorted) # records in companies database is processed by stocks.html
 
-@app.route('/stockfavourites', methods=['POST'])
-def stockfavourites():
+@app.route('/stock_favourites', methods=['POST'])
+def stock_favourites():
     data = request.get_json() # get JSON-parsed data from POST request
     print(data) # for debugging purposes
-    is_favourite = Favourites.query.filter_by(user_id=data['userID'], company_id=data['companyID']).first()
+    is_favourite = Favourites.query.filter_by(user_id=data['user_id'], company_id=data['company_id']).first()
     if not is_favourite: # check if already in favourites
-        new_favourite = Favourites(user_id=data['userID'], company_id=data['companyID'])
+        new_favourite = Favourites(user_id=data['user_id'], company_id=data['company_id'])
         db.session.add(new_favourite) # add entry to database
         db.session.commit() # data persists
         print("favourite added")
@@ -151,7 +151,7 @@ def favourites():
     favourites_names = []
     for company in results:
         favourites_names.append(company[0].name) # adding company names from query results
-    sorted = mainSort(favourites_names) # sort names
+    sorted = main_sort(favourites_names) # sort names
     return render_template('favourites.html', query=sorted) # rendering template with company names list
 
 # to run with python -m app
