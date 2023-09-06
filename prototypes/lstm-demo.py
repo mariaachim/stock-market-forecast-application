@@ -2,10 +2,10 @@
 # Written by Maria Achim
 # Started on 2nd September 2023
 
-import numpy as np
-import plotly.graph_objects as go
-import yfinance as yf
-import math
+import numpy as np # for multi-dimensional arrays
+import math # calculating MSE, MAE and RMSE
+import plotly.graph_objects as go # plotting graph
+import yfinance as yf # data API
 
 from sklearn.preprocessing import MinMaxScaler # for scaling data in preprocessing stage
 
@@ -23,6 +23,8 @@ historical = np.array(historical['Close']) # get close prices only
 sc = MinMaxScaler(feature_range=(0, 1)) # scales each feature to be in the given range
 aapl_scaled = sc.fit_transform(historical.reshape(-1, 1)) # fits data to scaler and transforms
 
+time_steps = 60
+
 # preparing training data
 training_data_len = math.ceil(len(historical) * 0.8) # last index for 80% of data
 train_data = aapl_scaled[0: training_data_len, :] # training data
@@ -31,21 +33,21 @@ X_train = [] # input
 y_train = [] # labels/outputs
 
 # 60 time steps - how many prior days are considered when predicting the closing price of next day
-for i in range(60, len(train_data)):
-    X_train.append(train_data[i-60:i, 0])
+for i in range(time_steps, len(train_data)):
+    X_train.append(train_data[i-time_steps:i, 0])
     y_train.append(train_data[i, 0])
 
 X_train, y_train = np.array(X_train), np.array(y_train) # cast to numpy array
 X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1)) # changes dimensionality of array
 
 # preparing testing data
-test_data = aapl_scaled[training_data_len-60:, :] # gets last 20% of data for testing
+test_data = aapl_scaled[training_data_len-time_steps:, :] # gets last 20% of data for testing
 X_test = [] # inputs
 y_test = historical[training_data_len:] # labels/outputs
 
 # 60 time steps - use last 60 days to predict
-for i in range(60, len(test_data)):
-    X_test.append(test_data[i-60:i, 0])
+for i in range(time_steps, len(test_data)):
+    X_test.append(test_data[i-time_steps:i, 0])
 
 X_test = np.array(X_test) # cast to numpy array
 X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1)) # changes dimentionality of array
