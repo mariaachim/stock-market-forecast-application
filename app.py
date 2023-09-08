@@ -8,7 +8,7 @@ from flask_session import Session
 #from forms import StocksSearchForm # NEW!!!!
 from models import db, Credentials, Companies, Favourites # local import from models.py
 import graphs
-from prototypes.quicksort import main_sort
+from quicksort import main_sort
 
 from numpy import genfromtxt # for reading CSV file
 from dotenv import load_dotenv # to handle environment variables
