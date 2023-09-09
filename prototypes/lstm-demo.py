@@ -54,10 +54,10 @@ X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1)) # changes dim
 
 # LSTM architecture
 model = Sequential() # stack of layers where each layer has one input tensor and one output tensor
-model.add(LSTM(100, return_sequences=True, input_shape=(X_train.shape[1], 1))) # stacking LSTM layers for greater complexity
-model.add(LSTM(100, return_sequences=False))
-model.add(Dense(25)) # dense layer - each neuron is connected to neurons from next layer
-model.add(Dense(1))
+model.add(LSTM(units=100, return_sequences=True, input_shape=(X_train.shape[1], 1))) # stacking LSTM layers for greater complexity
+model.add(LSTM(units=100, return_sequences=False))
+model.add(Dense(units=25)) # dense layer - each neuron is connected to neurons from next layer
+model.add(Dense(units=1))
 model.summary() # prints summary of model in terminal
 
 # training LSTM model

@@ -4,7 +4,6 @@
 
 import numpy as np # for multi-dimensional arrays
 import pandas as pd
-import math # calculating MSE, MAE and RMSE
 import plotly.graph_objects as go # plotting graph
 import yfinance as yf # data API
 
@@ -15,74 +14,80 @@ import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
 
-
-pd.options.mode.chained_assignment = None
-tf.random.set_seed(0)
+tf.random.set_seed(0) # makes code reproducible
 
 # preprocessing
-ticker = yf.Ticker('AAPL')
-historical = ticker.history(period='1y', rounding=True)
-df = yf.download(tickers=['AAPL'], period='1y')
+ticker = yf.Ticker('AAPL') # Apple stocks
+historical = ticker.history(period='1y', rounding=True) # gets data from past year
+df = historical # for dataframe manipulation when plotting graph
 historical.fillna(historical.mean()) # standardises data so there are no null values
-data = historical # for graph
 historical = np.array(historical['Close']) # get close prices only
 
 sc = MinMaxScaler(feature_range=(0, 1)) # scales each feature to be in the given range
 aapl_scaled = sc.fit_transform(historical.reshape(-1, 1)) # fits data to scaler and transforms
 
-lookback_time_steps = 60
-forecast_time_steps = 30
+lookback_time_steps = 60 # how many previous days are counted
+forecast_time_steps = 30 # how far into the future forecasting occurs
 
 # preparing data
-X = []
-y = []
+X_train = []
+y_train = []
 
+# adding data to training datasets
 for i in range(lookback_time_steps, len(historical) - forecast_time_steps + 1):
-    X.append(aapl_scaled[i - lookback_time_steps: i])
-    y.append(aapl_scaled[i: i + forecast_time_steps])
+    X_train.append(aapl_scaled[i-lookback_time_steps:i])
+    y_train.append(aapl_scaled[i:i+forecast_time_steps])
 
-X = np.array(X)
-y = np.array(y)
+X_train, y_train = np.array(X_train), np.array(y_train) # cast to numpy array
 
 # LSTM architecture
-model = Sequential()
-model.add(LSTM(units=50, return_sequences=True, input_shape=(lookback_time_steps, 1)))
+model = Sequential() # stack of layers where each layer has one input tensor and one output tensor
+model.add(LSTM(units=50, return_sequences=True, input_shape=(lookback_time_steps, 1))) # stacking LSTM layers for greater complexity
 model.add(LSTM(units=50))
-model.add(Dense(forecast_time_steps))
+model.add(Dense(units=forecast_time_steps)) # dense layer - each neuron is connected to neurons from next layer
+model.summary() # prints summary of model in terminal
 
+# training LSTM model
 model.compile(optimizer='adam', loss='mean_squared_error')
-model.fit(X, y, batch_size=1, epochs=3)
+# adam - gradient descent algorithm
+# MSE - predicts average squared difference between predicted and actual values
+model.fit(X_train, y_train, batch_size=1, epochs=3) # trains model
+# batch_size - number of samples to work through before updating internal model parameters
+# epochs - number of times the algorithm works through the dataset
 
 # generate forecasts
-X_ = aapl_scaled[- lookback_time_steps:]
-X_ = X_.reshape(1, lookback_time_steps, 1)
+X_forecast = aapl_scaled[- lookback_time_steps:] # create testing dataset
+X_forecast = X_forecast.reshape(1, lookback_time_steps, 1) # reshape testing dataset
 
-y_ = model.predict(X_).reshape(-1, 1)
-y_ = sc.inverse_transform(y_)
+y_forecast = model.predict(X_forecast).reshape(-1, 1) # predicts label of testing dataset and reshapes array
+y_forecast = sc.inverse_transform(y_forecast) # scales data to original transformations
 
 # dataframe
 past = df[['Close']].reset_index()
-past.rename(columns={'index': 'Date', 'Close': 'Actual'}, inplace=True)
+past.rename(columns={'index': 'Date', 'Close': 'Historical'}, inplace=True)
 past['Date'] = pd.to_datetime(past['Date'])
 past['Forecast'] = np.nan
-past['Forecast'].iloc[-1] = past['Actual'].iloc[-1]
+past['Forecast'].iloc[-1] = past['Historical'].iloc[-1]
 
-future = pd.DataFrame(columns=['Date', 'Actual', 'Forecast'])
+future = pd.DataFrame(columns=['Date', 'Historical', 'Forecast'])
 future['Date'] = pd.date_range(start=past['Date'].iloc[-1] + pd.Timedelta(days=1), periods=forecast_time_steps)
-future['Forecast'] = y_.flatten()
-future['Actual'] = np.nan
+future['Forecast'] = y_forecast.flatten()
+future['Historical'] = np.nan
 
-results = pd.concat([past, future], ignore_index=True)
-print(results)
+results = pd.concat([past, future], ignore_index=True) # appends datasets together
+print(results) # for debugging
 
 # graph
 fig = go.Figure()
-fig.add_trace(go.Scatter(x=results.Date, y=results.Actual, mode='lines', name='Previous'))
+# adding scatter graph for historical data
+fig.add_trace(go.Scatter(x=results.Date, y=results.Historical, mode='lines', name='Previous'))
+# adding scatter graph for forecasted data
 fig.add_trace(go.Scatter(x=results.Date, y=results.Forecast, mode='lines', name='Forecast'))
+# adding title, legend and axis labels
 fig.update_layout(
     title="Time Series Forecasting",
     xaxis_title="Date/Time",
     yaxis_title="Price",
     legend_title="Legend",
 )
-fig.show()
+fig.show() # show graph
