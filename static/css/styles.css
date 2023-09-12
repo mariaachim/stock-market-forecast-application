@@ -70,6 +70,13 @@ button:hover, input[type=submit]:hover {
   border: 0.15rem solid #065961;
 }
 
+#forecasts-button {
+  border-radius: 0 !important;
+  padding: 2% !important;
+  width: 20%;
+  margin-left: 20%;
+}
+
 ul {
   list-style-type: none;
   margin: 0;
@@ -134,7 +141,13 @@ button[type=button] {
 
 .chart {
   margin-left: 50%;
-  margin-top: -25%;
+  margin-top: -35%;
+  width: 45%;
+}
+
+#forecasts-chart {
+  margin-left: 35%;
+  margin-top: 0%;
   width: 45%;
 }
 

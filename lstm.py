@@ -1,60 +1,24 @@
-import yfinance as yf
-import plotly.graph_objects as go
-import plotly
-import json
-import numpy as np
+# Script for LSTM model
+# Written by Maria Achim
+# Started on 6th September 2023
+
+import numpy as np # for multi-dimensional arrays
+import math # calculating MSE, MAE and RMSE
 import pandas as pd
+import plotly.graph_objects as go # plotting graph
+import yfinance as yf # data API
 
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler # for scaling data in preprocessing stage
 
+# creating LSTM model
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
 
-def show_graph(option): # function to draw graph of historical stock prices with given stock and time period
-    ticker = yf.Ticker(option)
-    historical = ticker.history(period='max', interval='1mo', rounding=True) # all-time stock prices
-    week = ticker.history(period='5d', interval='1h', rounding=True)
-    print(week)
+time_step_dict = {"1y": [60, 30], "1m": [15, 5], "5d": [5, 1]}
 
-    fig = go.Figure()
-    fig.add_trace(go.Candlestick(x=historical.index,
-                                 open=historical['Open'],
-                                 high=historical['High'],
-                                 low=historical['Low'],
-                                 close=historical['Close'],
-                                 name='market data'))
-    fig.update_layout(title=option + " share price", yaxis_title='Stock Price') # title and axis label
-    fig.update_xaxes(
-        rangeslider_visible=True,
-        rangeselector=dict(
-            buttons=list([ # buttons to adjust time interval
-                  dict(count=15, label='15m', step="minute", stepmode="backward"),
-                  dict(count=45, label='45m', step="minute", stepmode="backward"),
-                  dict(count=1, label='1h', step="hour", stepmode="backward"),
-                  dict(count=6, label='6h', step="hour", stepmode="backward"),
-                  dict(step="all")
-            ])
-        )
-    )
-    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return graphJSON
-
-def heatmap(option): ## UNFINISHED
-    ticker = yf.Ticker(option)
-    historical = ticker.history(period='max', interval='1mo', rounding=True) # all-time stock prices
-
-    fig = plotly.subplots.make_subplots(rows=3, cols=1)
-    fig.add_trace(go.Candlestick(x=historical.index,
-                                 open=historical['Open'],
-                                 high=historical['High'],
-                                 low=historical['Low'],
-                                 close=historical['Close'],
-                                 name='market data'),
-                row=1, col=1)
-    fig.add_trace(go.Scatter(x=historical.index))
+model = Sequential()
 
 def forecast_lstm(stock, period):
-    time_step_dict = {"1y": [60, 30], "1m": [15, 5], "5d": [5, 1]}
     ticker = yf.Ticker(stock)
     historical = ticker.history(period=period, rounding=True)
     df = historical
@@ -74,7 +38,6 @@ def forecast_lstm(stock, period):
 
     X_train, y_train = np.array(X_train), np.array(y_train)
 
-    model = Sequential()
     model.add(LSTM(units=50, return_sequences=True, input_shape=(lookback_time_steps, 1)))
     model.add(LSTM(units=50))
     model.add(Dense(units=forecast_time_steps))
@@ -118,5 +81,6 @@ def forecast_lstm(stock, period):
         yaxis_title="Price",
         legend_title="Legend",
     )
-    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return graphJSON
+    fig.show() # show graph
+
+forecast_lstm("AAPL", "1y")
