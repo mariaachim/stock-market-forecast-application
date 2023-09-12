@@ -28,10 +28,10 @@ def show_graph(option): # function to draw graph of historical stock prices with
         rangeslider_visible=True,
         rangeselector=dict(
             buttons=list([ # buttons to adjust time interval
-                  dict(count=15, label='15m', step="minute", stepmode="backward"),
-                  dict(count=45, label='45m', step="minute", stepmode="backward"),
-                  dict(count=1, label='1h', step="hour", stepmode="backward"),
-                  dict(count=6, label='6h', step="hour", stepmode="backward"),
+                  dict(count=6, label='6mo', step="month", stepmode="backward"),
+                  dict(count=1, label='1y', step="year", stepmode="backward"),
+                  dict(count=2, label='2y', step="year", stepmode="backward"),
+                  dict(count=5, label='5y', step="year", stepmode="backward"),
                   dict(step="all")
             ])
         )
@@ -53,9 +53,9 @@ def heatmap(option): ## UNFINISHED
                 row=1, col=1)
     fig.add_trace(go.Scatter(x=historical.index))
 
-def forecast_lstm(stock, period):
-    time_step_dict = {"1y": [60, 30], "1m": [15, 5], "5d": [5, 1]}
-    ticker = yf.Ticker(stock)
+def forecast_lstm(option, period):
+    time_step_dict = {"1y": [60, 30], "1m": [15, 5], "5d": [5, 1]} # decides timesteps used
+    ticker = yf.Ticker(option)
     historical = ticker.history(period=period, rounding=True)
     df = historical
     historical.fillna(historical.mean())
@@ -113,7 +113,7 @@ def forecast_lstm(stock, period):
     fig.add_trace(go.Scatter(x=results.Date, y=results.Forecast, mode='lines', name='Forecast'))
     # adding title, legend and axis labels
     fig.update_layout(
-        title="Time Series Forecasting",
+        title= option + " Time Series Forecasting",
         xaxis_title="Date/Time",
         yaxis_title="Price",
         legend_title="Legend",
