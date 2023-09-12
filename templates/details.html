@@ -32,10 +32,10 @@
     <input type="submit" name="{{ details['mic'] }}" value="Forecast" id="forecasts-button">
   </form>
 
-  <button type="button" onclick="send_request({{ details['company_id'] }}, {{ userID }})">Add to Favourites</button>
-  <h2 id="msg"></h2>
-
   <div class="chart" id="chart"></div>
+
+  <button type="button" id="favourites-button" onclick="send_request({{ details['company_id'] }}, {{ userID }})">Add to Favourites</button>
+  <h2 id="msg"></h2>
 
   <script>
     let graphs = {{ graph | safe }};

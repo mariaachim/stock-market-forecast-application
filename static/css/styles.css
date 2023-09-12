@@ -75,6 +75,7 @@ button:hover, input[type=submit]:hover {
   padding: 2% !important;
   width: 20%;
   margin-left: 20%;
+  margin-bottom: 10%;
 }
 
 ul {
@@ -139,9 +140,18 @@ button[type=button] {
   width: 20%;
 }
 
+#favourites-button {
+  margin-top: -17% !important;
+}
+
+#msg {
+  margin-top: 1%;
+  position: absolute;
+}
+
 .chart {
   margin-left: 50%;
-  margin-top: -35%;
+  margin-top: -40%;
   width: 45%;
 }
 
@@ -149,8 +159,4 @@ button[type=button] {
   margin-left: 35%;
   margin-top: 0%;
   width: 45%;
-}
-
-#msg {
-  position: absolute;
 }
