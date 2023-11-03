@@ -5,6 +5,8 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, get_flashed_messages, session
 from flask_session import Session
 
+from newsapi import NewsApiClient
+
 #from forms import StocksSearchForm # NEW!!!!
 from models import db, Credentials, Companies, Favourites # local import from models.py
 import graphs
@@ -15,12 +17,16 @@ from dotenv import load_dotenv # to handle environment variables
 
 # standard libraries
 import os
+import random
 
 # loading environmental variables so i don't push credentials to github
 load_dotenv()
 dbusername = os.getenv("DBUSER")
 dbpassword = os.getenv("DBPASSWORD")
 key = os.getenv("KEY")
+api_key = os.getenv("API-KEY")
+
+api = NewsApiClient(api_key = api_key)
 
 app = Flask(__name__) # initialise flask application
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{dbusername}:{dbpassword}@127.0.0.1/cs-nea" # database connection
@@ -148,12 +154,20 @@ def stock_favourites():
     
 @app.route('/news')
 def news():
-    return render_template('news.html')
+    top_headlines = api.get_top_headlines(category='business') # gets articles with "business" tag
+    print(len(top_headlines['articles'])) # prints number of articles fetched from API
+    if len(top_headlines['articles']) < 6:
+        articles = random.choices(top_headlines['articles'], k=6) # randomly selects 6 articles with replacement
+    else:
+        articles = random.sample(top_headlines['articles'], 6) # randomly selects 6 articles without replacement
+    for i in range(len(articles)): # for improved terminal output readability
+        print(articles[i])
+    return render_template('news.html') # rendering template
 
 @app.route('/favourites')
 def favourites():
     # SQL query to find Companies with corresponding entry in Favourites using join statement
-    results = db.session.query(Companies, Favourites).join(Favourites).filter(Favourites.user_id==session['userID']).all()
+    results = db.session.query(Companies, Favourites).join(Favourites).filter(Favourites.user_id == session['userID']).all()
     favourites_names = []
     for company in results:
         favourites_names.append(company[0].name) # adding company names from query results
