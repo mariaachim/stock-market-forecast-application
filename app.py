@@ -155,10 +155,12 @@ def stock_favourites():
 @app.route('/news')
 def news():
     top_headlines = api.get_top_headlines(category='business') # gets articles with "business" tag
-    print(len(top_headlines['articles'])) # prints number of articles fetched from API
+    #print(len(top_headlines['articles'])) # prints number of articles fetched from API
     if len(top_headlines['articles']) < 6:
-        articles = random.choices(top_headlines['articles'], k=6) # randomly selects 6 articles with replacement
+        print("random.choices() used") # debugging, remove in prod
+        articles = top_headlines['articles'] + random.choices(top_headlines['articles'], k=(6 - len(top_headlines['articles']))) # displays all articles and randomly selects with replacement
     else:
+        print("random.sample() used") # debugging, remove in prod
         articles = random.sample(top_headlines['articles'], 6) # randomly selects 6 articles without replacement
     for i in range(len(articles)): # for improved terminal output readability
         print(articles[i])
