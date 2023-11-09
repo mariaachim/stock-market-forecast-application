@@ -17,10 +17,9 @@ from keras.layers import LSTM, Dense
 tf.random.set_seed(0) # makes code reproducible
 
 # preprocessing
-ticker = yf.Ticker('AMZN') # Apple stocks
-historical = ticker.history(start="2023-01-01", end="2023-09-01", rounding=True) # gets data from past year
-actual_data = ticker.history(start="2023-01-01", end="2023-11-01", rounding=True)
-
+ticker = yf.Ticker('AAPL') # Apple stocks
+historical = ticker.history(start="2023-01-01", end="2023-09-01", rounding=True) # gets 8 months of data
+actual_data = ticker.history(start="2023-01-01", end="2023-11-01", rounding=True) # gets 10 months of data
 df = historical # for dataframe manipulation when plotting graph
 historical.fillna(historical.mean()) # standardises data so there are no null values
 historical = np.array(historical['Close']) # get close prices only
