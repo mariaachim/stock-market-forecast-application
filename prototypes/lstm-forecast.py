@@ -17,8 +17,10 @@ from keras.layers import LSTM, Dense
 tf.random.set_seed(0) # makes code reproducible
 
 # preprocessing
-ticker = yf.Ticker('AAPL') # Apple stocks
-historical = ticker.history(period='1y', rounding=True) # gets data from past year
+ticker = yf.Ticker('AMZN') # Apple stocks
+historical = ticker.history(start="2023-01-01", end="2023-09-01", rounding=True) # gets data from past year
+actual_data = ticker.history(start="2023-01-01", end="2023-11-01", rounding=True)
+
 df = historical # for dataframe manipulation when plotting graph
 historical.fillna(historical.mean()) # standardises data so there are no null values
 historical = np.array(historical['Close']) # get close prices only
@@ -83,6 +85,13 @@ fig = go.Figure()
 fig.add_trace(go.Scatter(x=results.Date, y=results.Historical, mode='lines', name='Previous'))
 # adding scatter graph for forecasted data
 fig.add_trace(go.Scatter(x=results.Date, y=results.Forecast, mode='lines', name='Forecast'))
+# adding candlestick for actual data
+fig.add_trace(go.Candlestick(x=actual_data.index, # candlestick chart - typically used for stocks
+                open=actual_data['Open'],
+                high=actual_data['High'],
+                low=actual_data['Low'],
+                close=actual_data['Close'],
+                name='Actual Prices'))
 # adding title, legend and axis labels
 fig.update_layout(
     title="Time Series Forecasting",
