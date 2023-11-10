@@ -17,5 +17,12 @@
       <li><a href="/favourites">Favourites</a></li>
     </ul>
   </div>
+
+  <div class="news">
+    {% for article in articles %}
+      <a href={{ article['url'] }}>{{ article['title'] }}</a>
+      <br />
+    {% endfor %}
+  </div>
 </body>
 </html>

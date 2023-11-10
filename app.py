@@ -164,7 +164,7 @@ def news():
         articles = random.sample(top_headlines['articles'], 6) # randomly selects 6 articles without replacement
     for i in range(len(articles)): # for improved terminal output readability
         print(articles[i])
-    return render_template('news.html') # rendering template
+    return render_template('news.html', articles=articles) # rendering template
 
 @app.route('/favourites')
 def favourites():

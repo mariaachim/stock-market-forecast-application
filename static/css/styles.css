@@ -134,6 +134,10 @@ li a.active {
   margin-left: 20%;
 }
 
+.news {
+  margin-left: 20%;
+}
+
 button[type=button] {
   margin-left: 20%;
   border-radius: 0;
