@@ -165,3 +165,7 @@ button[type=button] {
   margin-top: 0%;
   width: 45%;
 }
+
+#download-csv {
+  margin-left: 50%;
+}

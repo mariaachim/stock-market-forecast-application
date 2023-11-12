@@ -134,8 +134,11 @@ def stocks():
 @app.route('/forecasts', methods=['POST'])
 def forecasts():
     mic = list(request.form.keys())[0] # get POST request parameters
-    graph_json = graphs.forecast_lstm(mic, "1y") # default to showing past year with one month of predictions
-    return render_template('forecasts.html', name=mic, graph=graph_json) # renders template with MIC and graph JSON
+    forecast = graphs.forecast_lstm(mic, "1y")
+    graph_json = forecast[0] # default to showing past year with one month of predictions
+    csv = graphs.get_csv(forecast[1]) # generate CSV file
+    print(csv)
+    return render_template('forecasts.html', name=mic, graph=graph_json, csv=csv) # renders template with MIC, graph JSON and CSV file
 
 @app.route('/stock_favourites', methods=['POST'])
 def stock_favourites():

@@ -113,10 +113,15 @@ def forecast_lstm(option, period):
     fig.add_trace(go.Scatter(x=results.Date, y=results.Forecast, mode='lines', name='Forecast'))
     # adding title, legend and axis labels
     fig.update_layout(
-        title= option + " Time Series Forecasting",
+        title=option + " Time Series Forecasting",
         xaxis_title="Date/Time",
         yaxis_title="Price",
         legend_title="Legend",
     )
-    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return graphJSON
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder) # create JSON object to display graph in HTML
+
+    forecasts = future[['Date', 'Forecast']] # creates new Pandas dataframe with only Date and Forecast columns
+    return [graphJSON, forecasts] # return graph JSON and forecasts dataframe to generate CSV
+
+def get_csv(dataframe):
+    return dataframe.to_csv("./static/forecasts.csv", index=False) # creates CSV file within static directory (hosted by Flask server)
