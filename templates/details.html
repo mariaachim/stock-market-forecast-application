@@ -28,6 +28,10 @@
     <h2># Employees: {{ details['num_employees'] }}</h2>
   </div>
 
+  <form method="POST" action="/trendlines">
+    <input type="submit" name="{{ details['mic'] }}" value="Show Trendlines" id="trendlines-button">
+  </form>
+
   <form method="POST" action="/forecasts">
     <input type="submit" name="{{ details['mic'] }}" value="Forecast" id="forecasts-button">
   </form>

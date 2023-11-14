@@ -131,6 +131,12 @@ def stocks():
         sorted = main_sort(names) # sort names
         return render_template('stocks.html', query=sorted) # records in companies database is processed by stocks.html
 
+@app.route('/trendlines', methods=['POST'])
+def trendlines():
+    option = list(request.form.keys())[0]
+    graph_json = graphs.trendlines(option)
+    return render_template('trendlines.html', graph=graph_json)
+
 @app.route('/forecasts', methods=['POST'])
 def forecasts():
     mic = list(request.form.keys())[0] # get POST request parameters

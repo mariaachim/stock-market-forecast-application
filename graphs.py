@@ -1,5 +1,6 @@
 import yfinance as yf
 import plotly.graph_objects as go
+import plotly.express as px
 import plotly
 import json
 import numpy as np
@@ -22,7 +23,7 @@ def show_graph(option): # function to draw graph of historical stock prices with
                                  high=historical['High'],
                                  low=historical['Low'],
                                  close=historical['Close'],
-                                 name='market data'))
+                                 name='Market Data'))
     fig.update_layout(title=option + " share price", yaxis_title='Stock Price') # title and axis label
     fig.update_xaxes(
         rangeslider_visible=True,
@@ -37,6 +38,23 @@ def show_graph(option): # function to draw graph of historical stock prices with
         )
     )
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
+
+def trendlines(option):
+    ticker = yf.Ticker(option)
+    historical = ticker.history(period='2mo', interval='1d', rounding=True) # 2 months of historical data
+    scatter = px.scatter(historical, x=historical.index, y=historical['Close'], trendline='ols') # generate trendline from plotting scatter graph
+    trendline = scatter.data[1] # only get trendline generated
+    fig = go.Figure()
+    fig.add_trace(go.Candlestick(x=historical.index,
+                                 open=historical['Open'],
+                                 high=historical['High'],
+                                 low=historical['Low'],
+                                 close=historical['Close'],
+                                 name='Market Data'))
+    fig.add_trace(trendline) # display trendline over candlestick chart
+    fig.update_layout(title=option + " share price", yaxis_title='Stock Price', autosize=False, width=800, height=500) # title and axis label
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder) # export to JSON
     return graphJSON
 
 def heatmap(option): ## UNFINISHED

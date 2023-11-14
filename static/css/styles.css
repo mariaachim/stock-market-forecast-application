@@ -78,6 +78,14 @@ button:hover, input[type=submit]:hover {
   margin-bottom: 10%;
 }
 
+#trendlines-button {
+  border-radius: 0 !important;
+  padding: 2% !important;
+  width: 20%;
+  margin-left: 20%;
+  margin-bottom: 10%;
+}
+
 ul {
   list-style-type: none;
   margin: 0;
@@ -158,6 +166,11 @@ button[type=button] {
   margin-left: 50%;
   margin-top: -40%;
   width: 45%;
+}
+
+.trendlines-chart {
+  margin-top: 0%;
+  margin-left: 27.5%;
 }
 
 #forecasts-chart {
