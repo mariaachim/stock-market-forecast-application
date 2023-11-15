@@ -75,7 +75,10 @@ button:hover, input[type=submit]:hover {
   padding: 2% !important;
   width: 20%;
   margin-left: 20%;
-  margin-bottom: 10%;
+  /*
+  margin-bottom: 50%;
+  */
+  margin-top: -2%;
 }
 
 #trendlines-button {
@@ -83,7 +86,9 @@ button:hover, input[type=submit]:hover {
   padding: 2% !important;
   width: 20%;
   margin-left: 20%;
-  margin-bottom: 10%;
+  /*
+  margin-bottom: 10%;*/
+  margin-top: -2%;
 }
 
 ul {
@@ -154,7 +159,7 @@ button[type=button] {
 }
 
 #favourites-button {
-  margin-top: -17% !important;
+  margin-top: -2% !important;
 }
 
 #msg {
@@ -164,7 +169,7 @@ button[type=button] {
 
 .chart {
   margin-left: 50%;
-  margin-top: -40%;
+  margin-top: -20%;
   width: 45%;
 }
 
@@ -175,7 +180,7 @@ button[type=button] {
 
 #forecasts-chart {
   margin-left: 35%;
-  margin-top: 0%;
+  margin-top: 5%;
   width: 45%;
 }
 

@@ -131,11 +131,11 @@ def stocks():
         sorted = main_sort(names) # sort names
         return render_template('stocks.html', query=sorted) # records in companies database is processed by stocks.html
 
-@app.route('/trendlines', methods=['POST'])
+@app.route('/trendlines', methods=['POST']) # function triggered by POST request
 def trendlines():
-    option = list(request.form.keys())[0]
-    graph_json = graphs.trendlines(option)
-    return render_template('trendlines.html', graph=graph_json)
+    option = list(request.form.keys())[0] # get POST request parameters
+    graph_json = graphs.trendlines(option) # generate JSON object
+    return render_template('trendlines.html', graph=graph_json) # pass JSON object into HTML template
 
 @app.route('/forecasts', methods=['POST'])
 def forecasts():
