@@ -5,6 +5,7 @@ import plotly
 import json
 import numpy as np
 import pandas as pd
+import math
 
 from sklearn.preprocessing import MinMaxScaler
 
@@ -56,20 +57,6 @@ def trendlines(option):
     fig.update_layout(title=option + " share price", yaxis_title='Stock Price', autosize=False, width=800, height=500) # title and axis label
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder) # export to JSON
     return graphJSON
-
-def heatmap(option): ## UNFINISHED
-    ticker = yf.Ticker(option)
-    historical = ticker.history(period='max', interval='1mo', rounding=True) # all-time stock prices
-
-    fig = plotly.subplots.make_subplots(rows=3, cols=1)
-    fig.add_trace(go.Candlestick(x=historical.index,
-                                 open=historical['Open'],
-                                 high=historical['High'],
-                                 low=historical['Low'],
-                                 close=historical['Close'],
-                                 name='market data'),
-                row=1, col=1)
-    fig.add_trace(go.Scatter(x=historical.index))
 
 def forecast_lstm(option, period):
     time_step_dict = {"1y": [60, 30], "1m": [15, 5], "5d": [5, 1]} # decides timesteps used
@@ -143,3 +130,30 @@ def forecast_lstm(option, period):
 
 def get_csv(dataframe):
     return dataframe.to_csv("./static/forecasts.csv", index=False) # creates CSV file within static directory (hosted by Flask server)
+
+def heatmap(favourites):
+    # downloading market from previous two days
+    returns = yf.download(tickers=favourites, period='2d', interval='1d', group_by='ticker', auto_adjust=True, prepost=True, threads=True, proxy=None)
+    returns = returns.iloc[:, returns.columns.get_level_values(1) == 'Close'] # getting Close prices
+    returns.columns = returns.columns.droplevel(1) # remove row with "Close" label
+
+    returns = round(returns.pct_change()*100, 2) # calculating percentage change between days
+    returns = returns.iloc[1:].values.tolist()[0] # remove date and convert dataframe to list
+
+    # this code is used to change to formatting of heatmap
+    num_rows = round(math.sqrt(len(favourites))) # calculate optimal number of rows based on number of tickers
+    heatmap_names_list = [favourites[i : i+num_rows] for i in range(0, len(favourites), num_rows)] # split names into sublists
+    heatmap_returns_list = [returns[i : i+num_rows] for i in range(0, len(returns), num_rows)] # split percentage change into sublists
+
+    # generate heatmap
+    fig = go.Figure(data=go.Heatmap(
+                        z=heatmap_returns_list,
+                        text=heatmap_names_list,
+                        texttemplate="%{text}",
+                        textfont={"size":20},
+                        colorscale="RdYlGn"
+    ))
+
+    fig.update_layout(title="Favourites Heatmap", autosize=False, width=800, height=500) # title and axis label
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder) # export to JSON
+    return graphJSON

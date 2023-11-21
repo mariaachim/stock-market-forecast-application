@@ -91,6 +91,16 @@ button:hover, input[type=submit]:hover {
   margin-top: -2%;
 }
 
+#heatmap-button {
+  border-radius: 0 !important;
+  padding: 2% !important;
+  width: 20%;
+  margin-left: 47%;
+  /*
+  margin-bottom: 10%;*/
+  margin-top: 5%;
+}
+
 ul {
   list-style-type: none;
   margin: 0;
@@ -178,7 +188,7 @@ button[type=button] {
   margin-left: 27.5%;
 }
 
-#forecasts-chart {
+#page-chart {
   margin-left: 35%;
   margin-top: 5%;
   width: 45%;

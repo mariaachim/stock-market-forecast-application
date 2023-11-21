@@ -185,6 +185,16 @@ def favourites():
     sorted = main_sort(favourites_names) # sort names
     return render_template('favourites.html', query=sorted) # rendering template with company names list
 
+@app.route('/heatmap', methods=['POST'])
+def heatmap():
+    # SQL query to find Companies with corresponding entry in Favourites using join statement
+    results = db.session.query(Companies, Favourites).join(Favourites).filter(Favourites.user_id == session['userID']).all()
+    favourites_mic = []
+    for company in results:
+        favourites_mic.append(company[0].mic) # adding company MICs from query results
+    graph_json = graphs.heatmap(favourites_mic)
+    return render_template('heatmap.html', graph=graph_json) # rendering template with company MICs list
+
 # to run with python -m app
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)

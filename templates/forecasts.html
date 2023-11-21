@@ -20,11 +20,11 @@
     </ul>
   </div>
 
-  <div class="chart" id="forecasts-chart"></div>
+  <div class="chart" id="page-chart"></div>
 
   <script>
     let graphs = {{ graph | safe }};
-    Plotly.plot('forecasts-chart', graphs, {})
+    Plotly.plot('page-chart', graphs, {})
   </script>
 
   <a id="download-csv" href="./static/forecasts.csv" download='forecasts.csv'>Download CSV</a>
