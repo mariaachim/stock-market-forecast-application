@@ -157,3 +157,19 @@ def heatmap(favourites):
     fig.update_layout(title="Favourites Heatmap", autosize=False, width=800, height=500) # title and axis label
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder) # export to JSON
     return graphJSON
+
+def compare_favourites(favourites):
+    # downloading historical market data from past year
+    historical = yf.download(tickers=favourites, period='1y', interval='1d', group_by='ticker', auto_adjust=True, prepost=True, threads=True, proxy=None)
+    historical = historical.iloc[:, historical.columns.get_level_values(1) == 'Close'] # getting Close prices
+    print(historical)
+
+    fig = go.Figure()
+
+    # creates new trace for each favourites entry
+    for i in range(len(favourites)):
+        fig.add_trace(go.Scatter(x=historical[favourites[i]].index, y=historical[favourites[i]]['Close'], name=favourites[i]))
+
+    fig.update_layout(title="Stock Comparison", autosize=False, width=800, height=500) # title and axis label
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder) # export to JSON
+    return graphJSON

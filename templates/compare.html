@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="static/css/styles.css">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <script src="static/js/script.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> <!-- plotly.js file to render graphs -->
+  <title>Compare</title>
+</head>
+<body>
+  <h1 class="title">Compare</h1>
+  <div class="sidebar-nav">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/stocks">Stocks</a></li>
+      <li><a href="/news">News</a></li>
+      <li><a href="/favourites" class="active">Favourites</a></li>
+    </ul>
+  </div>
+
+  <div class="chart" id="page-chart"></div>
+
+  <script>
+    let graphs = {{ graph | safe }};
+    Plotly.plot('page-chart', graphs, {});
+  </script>
+  
+</body>
+</html>
