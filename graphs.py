@@ -144,6 +144,7 @@ def heatmap(favourites):
     num_rows = round(math.sqrt(len(favourites))) # calculate optimal number of rows based on number of tickers
     heatmap_names_list = [favourites[i : i+num_rows] for i in range(0, len(favourites), num_rows)] # split names into sublists
     heatmap_returns_list = [returns[i : i+num_rows] for i in range(0, len(returns), num_rows)] # split percentage change into sublists
+    print(heatmap_returns_list)
 
     # generate heatmap
     fig = go.Figure(data=go.Heatmap(
@@ -154,7 +155,7 @@ def heatmap(favourites):
                         colorscale="RdYlGn"
     ))
 
-    fig.update_layout(title="Favourites Heatmap", autosize=False, width=800, height=500) # title and axis label
+    fig.update_layout(title="Favourites Heatmap", autosize=False, width=1000, height=750) # title and axis label
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder) # export to JSON
     return graphJSON
 
