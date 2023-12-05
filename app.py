@@ -18,6 +18,9 @@ from dotenv import load_dotenv # to handle environment variables
 # standard libraries
 import os
 import random
+import string
+import re # for password regex
+import hashlib # for hashing passwords
 
 # loading environmental variables so i don't push credentials to github
 load_dotenv()
@@ -102,9 +105,18 @@ def register_post():
         flash('Username is already taken', 'error')
     elif password != password_confirmation: # checking if passwords are not the same
         flash('Passwords do not match', 'error')
+    # below line uses regular expressions to check password requirements
+    elif not re.search("^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{12,}$", password):
+        flash('Password should be at least 12 characters and have a combination of lowercase letters, uppercase letters, numbers and symbols', 'error')
     else:
         print("Valid credentials")
-        new_user = Credentials(username=username, password=password) # creating new Credentials object
+        # creating a 6 character salt
+        salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for i in range(6))
+        hashed_password = hashlib.sha256() # hash object
+        hashed_password.update(bytes(password + salt, 'utf-8')) # appending salt to password
+        # .hexdigest() method returns 64 hexadecimal characters corresponding to the hash object
+        print(hashed_password.hexdigest())
+        new_user = Credentials(username=username, password=str(hashed_password.hexdigest())) # creating new Credentials object
         db.session.add(new_user) # adding credentials to database
         db.session.commit()
         flash('Account created', 'error')

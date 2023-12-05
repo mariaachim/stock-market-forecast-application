@@ -5,8 +5,9 @@ db = SQLAlchemy()
 class Credentials(db.Model):
     __tablename__ = 'Credentials'
     user_id = db.Column(db.Integer, primary_key=True) # user_id is primary key
-    username = db.Column(db.String(length=50), nullable=False, unique=True)
-    password = db.Column(db.String(length=50), nullable=False)
+    username = db.Column(db.String(length=64), nullable=False, unique=True)
+    password = db.Column(db.String(length=64), nullable=False)
+    salt = db.Column(db.String(length=6), nullable=False)
 
     def __repr__(self): # function for debugging purposes
         return f'<User {self.username}>'
