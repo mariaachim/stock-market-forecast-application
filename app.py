@@ -111,9 +111,9 @@ def register_post():
     else:
         print("Valid credentials")
         # creating a 6 character salt
-        salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for i in range(6))
-        hashed_password = hashlib.sha256() # hash object
-        hashed_password.update(bytes(password + salt, 'utf-8')) # appending salt to password
+        salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for i in range(6)) # create string of random characters
+        hashed_password = hashlib.sha256() # create hash object of SHA256 hash
+        hashed_password.update(bytes(password + salt, 'utf-8')) # appending salt to password and hashing it with SHA256
         # .hexdigest() method returns 64 hexadecimal characters corresponding to the hash object
         print(hashed_password.hexdigest())
         new_user = Credentials(username=username, password=str(hashed_password.hexdigest())) # creating new Credentials object
