@@ -9,9 +9,6 @@ class Credentials(db.Model):
     password = db.Column(db.String(length=64), nullable=False)
     salt = db.Column(db.String(length=6), nullable=False)
 
-    def __repr__(self): # function for debugging purposes
-        return f'<User {self.username}>'
-
 class Companies(db.Model):
     __tablename__ = 'Companies'
     company_id = db.Column(db.Integer, primary_key=True) # company_id is primary key

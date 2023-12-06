@@ -75,17 +75,31 @@ def login():
 @app.route('/login', methods=['GET', 'POST'])
 def login_post():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('psw')
-        is_user = Credentials.query.filter_by(username=username, password=password).first()
-        print(is_user)
-        if not is_user:
-            flash('Please check login details', 'error') # reloads page and shows authentication failed
-            return render_template('login.html')
-        else:
-            session['user'] = request.form.get('username') # only store username in session data
-            session['userID'] = is_user.user_id # store user_id so new record to Favourites table can be created
-            return redirect(url_for('index')) # if user is authenticated, redirect to index page
+        username = request.form.get('username').strip()
+        password = request.form.get('psw').strip()
+        print(password)
+        all_creds = Credentials.query.all() # gets all records from Credentials table
+        hashed_password = hashlib.sha256() # creates SHA256 object
+        
+        for i in range(len(all_creds)): # iterates over records
+            print(all_creds[i].salt)
+            hashed_password.update(bytes((password + all_creds[i].salt).strip(), 'utf-8')) # creates SHA256 hash from input password and salt from record
+            # comparing hash with password hash in database and input username with username in database 
+            print(repr(hashed_password.hexdigest()))
+            print(repr(all_creds[i].password))
+            compare = str(hashed_password.hexdigest())
+            if compare == all_creds[i].password and username == all_creds[i].username:
+                print("yes")
+                is_user = Credentials.query.filter_by(username=username, password=str(hashed_password.hexdigest())).first()
+                print(is_user)
+                session['user'] = request.form.get('username') # only store username in session data
+                session['userID'] = is_user.user_id # store user_id so new record to Favourites table can be created
+                print(is_user.user_id)
+                return redirect(url_for('index')) # if user is authenticated, redirect to index page
+        
+        # if no match, then these lines are executed
+        flash('Please check login details', 'error') # reloads page and shows authentication failed
+        return render_template('login.html')
     else:
         return render_template('login.html')
 
@@ -95,9 +109,9 @@ def register():
 
 @app.route('/register', methods=['POST']) # called when POST request is sent by interaction
 def register_post():
-    username = request.form.get('username')
-    password = request.form.get('psw')
-    password_confirmation = request.form.get('psw-confirmation')
+    username = request.form.get('username').strip()
+    password = request.form.get('psw').strip()
+    password_confirmation = request.form.get('psw-confirmation').strip()
     username_taken = Credentials.query.filter_by(username=username).first()
     if username_taken and password != password_confirmation: # checking if username is already in database and passwords are not the same
         flash('Username is already taken and passwords do not match', 'error')
@@ -111,15 +125,16 @@ def register_post():
     else:
         print("Valid credentials")
         # creating a 6 character salt
-        salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for i in range(6)) # create string of random characters
+        salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for i in range(6)) # create string of random characters
         hashed_password = hashlib.sha256() # create hash object of SHA256 hash
+        print(password + salt)
         hashed_password.update(bytes(password + salt, 'utf-8')) # appending salt to password and hashing it with SHA256
-        # .hexdigest() method returns 64 hexadecimal characters corresponding to the hash object
+        # .hexdigest() method returns 64 hexadecimal characters corresponding to the message hexdigest
         print(hashed_password.hexdigest())
-        new_user = Credentials(username=username, password=str(hashed_password.hexdigest())) # creating new Credentials object
+        new_user = Credentials(username=username, password=str(hashed_password.hexdigest()), salt=salt) # creating new Credentials object
         db.session.add(new_user) # adding credentials to database
-        db.session.commit()
-        flash('Account created', 'error')
+        db.session.commit() # committing changes to database
+        flash('Account created', 'error') # showing message that account has been created
         return render_template('login.html') # if account has been created
     return render_template('register.html')
 
