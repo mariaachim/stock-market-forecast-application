@@ -131,6 +131,11 @@ def forecast_lstm(option, period):
 def get_csv(dataframe):
     return dataframe.to_csv("./static/forecasts.csv", index=False) # creates CSV file within static directory (hosted by Flask server)
 
+def get_historical(option):
+    ticker = yf.Ticker(option)
+    historical = ticker.history(period='max', interval='1m', rounding=True) # all-time stock prices
+    return historical.to_csv("./static/historical.csv", index=False)
+
 def heatmap(favourites):
     # downloading market from previous two days
     returns = yf.download(tickers=favourites, period='2d', interval='1d', group_by='ticker', auto_adjust=True, prepost=True, threads=True, proxy=None)

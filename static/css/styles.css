@@ -86,12 +86,19 @@ button:hover, input[type=submit]:hover {
   margin-top: -2%;
 }
 
-#heatmap-button {
+#heatmap-button, #comparison-button {
   border-radius: 0 !important;
   padding: 2% !important;
   width: 20%;
   margin-left: 47%;
   margin-top: 5%;
+  background-color: #2e1c66;
+  border: 0.15rem solid #b4a1ed;
+}
+
+#heatmap-button:hover, #comparison-button:hover {
+  background-color: #b4a1ed;
+  border: 0.15rem solid #2e1c66;
 }
 
 #comparison-button {

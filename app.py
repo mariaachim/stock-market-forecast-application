@@ -77,24 +77,16 @@ def login_post():
     if request.method == 'POST':
         username = request.form.get('username').strip()
         password = request.form.get('psw').strip()
-        print(password)
         all_creds = Credentials.query.all() # gets all records from Credentials table
-        hashed_password = hashlib.sha256() # creates SHA256 object
         
         for i in range(len(all_creds)): # iterates over records
-            print(all_creds[i].salt)
-            hashed_password.update(bytes((password + all_creds[i].salt).strip(), 'utf-8')) # creates SHA256 hash from input password and salt from record
-            # comparing hash with password hash in database and input username with username in database 
-            print(repr(hashed_password.hexdigest()))
-            print(repr(all_creds[i].password))
-            compare = str(hashed_password.hexdigest())
-            if compare == all_creds[i].password and username == all_creds[i].username:
-                print("yes")
-                is_user = Credentials.query.filter_by(username=username, password=str(hashed_password.hexdigest())).first()
-                print(is_user)
+            print(password + all_creds[i].salt)
+            hashed = hashlib.sha256(bytes((password + all_creds[i].salt), 'utf-8')).hexdigest() # creates SHA256 hash from input password and salt from record and converts to readable hex format
+            # comparing hash with password hash in database and input username with username in database
+            if hashed == all_creds[i].password and username == all_creds[i].username:
+                is_user = Credentials.query.filter_by(username=username, password=hashed).first()
                 session['user'] = request.form.get('username') # only store username in session data
                 session['userID'] = is_user.user_id # store user_id so new record to Favourites table can be created
-                print(is_user.user_id)
                 return redirect(url_for('index')) # if user is authenticated, redirect to index page
         
         # if no match, then these lines are executed
@@ -126,12 +118,9 @@ def register_post():
         print("Valid credentials")
         # creating a 6 character salt
         salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for i in range(6)) # create string of random characters
-        hashed_password = hashlib.sha256() # create hash object of SHA256 hash
-        print(password + salt)
-        hashed_password.update(bytes(password + salt, 'utf-8')) # appending salt to password and hashing it with SHA256
+        hashed_password = hashlib.sha256(bytes((password + salt), 'utf-8')).hexdigest() # appending salt to password and hashing it with SHA256
         # .hexdigest() method returns 64 hexadecimal characters corresponding to the message hexdigest
-        print(hashed_password.hexdigest())
-        new_user = Credentials(username=username, password=str(hashed_password.hexdigest()), salt=salt) # creating new Credentials object
+        new_user = Credentials(username=username, password=str(hashed_password), salt=salt) # creating new Credentials object
         db.session.add(new_user) # adding credentials to database
         db.session.commit() # committing changes to database
         flash('Account created', 'error') # showing message that account has been created
@@ -149,6 +138,7 @@ def stocks():
         print(dict(record))
         # get name of option from dict(record)['mic']
         graph_json = graphs.show_graph(dict(record)['mic'])
+        graphs.get_historical(dict(record)['mic']) # create historical CSV file
         return render_template('details.html', details=dict(record), userID=session['userID'], graph=graph_json) # converts record to dictionary so key-value pairs can be used in the template
     else: # run when /stocks page is rendered first
         company_objects = Companies.query.all() # list of Company objects
