@@ -16,7 +16,6 @@ def show_graph(option): # function to draw graph of historical stock prices with
     ticker = yf.Ticker(option)
     historical = ticker.history(period='max', interval='1mo', rounding=True) # all-time stock prices
     week = ticker.history(period='5d', interval='1h', rounding=True)
-    print(week)
 
     fig = go.Figure()
     fig.add_trace(go.Candlestick(x=historical.index,
@@ -108,7 +107,6 @@ def forecast_lstm(option, period):
     future['Historical'] = np.nan
 
     results = pd.concat([past, future], ignore_index=True) # appends datasets together
-    print(results) # for debugging
 
     # graph
     fig = go.Figure()
@@ -149,7 +147,6 @@ def heatmap(favourites):
     num_rows = round(math.sqrt(len(favourites))) # calculate optimal number of rows based on number of tickers
     heatmap_names_list = [favourites[i : i+num_rows] for i in range(0, len(favourites), num_rows)] # split names into sublists
     heatmap_returns_list = [returns[i : i+num_rows] for i in range(0, len(returns), num_rows)] # split percentage change into sublists
-    print(heatmap_returns_list)
 
     # generate heatmap
     fig = go.Figure(data=go.Heatmap(
@@ -168,7 +165,6 @@ def compare_favourites(favourites):
     # downloading historical market data from past year
     historical = yf.download(tickers=favourites, period='1y', interval='1d', group_by='ticker', auto_adjust=True, prepost=True, threads=True, proxy=None)
     historical = historical.iloc[:, historical.columns.get_level_values(1) == 'Close'] # getting Close prices
-    print(historical)
 
     fig = go.Figure()
 

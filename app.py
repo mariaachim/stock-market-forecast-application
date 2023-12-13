@@ -80,7 +80,6 @@ def login_post():
         all_creds = Credentials.query.all() # gets all records from Credentials table
         
         for i in range(len(all_creds)): # iterates over records
-            print(password + all_creds[i].salt)
             hashed = hashlib.sha256(bytes((password + all_creds[i].salt), 'utf-8')).hexdigest() # creates SHA256 hash from input password and salt from record and converts to readable hex format
             # comparing hash with password hash in database and input username with username in database
             if hashed == all_creds[i].password and username == all_creds[i].username:
@@ -115,7 +114,6 @@ def register_post():
     elif not re.search("^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{12,}$", password):
         flash('Password should be at least 12 characters and have a combination of lowercase letters, uppercase letters, numbers and symbols', 'error')
     else:
-        print("Valid credentials")
         # creating a 6 character salt
         salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for i in range(6)) # create string of random characters
         hashed_password = hashlib.sha256(bytes((password + salt), 'utf-8')).hexdigest() # appending salt to password and hashing it with SHA256
@@ -135,7 +133,6 @@ def stocks():
         for i in list(vars(details).items()): # list of tuples
             if i[0] != "_sa_instance_state": # removes unnecessary attribute
                 record.append(i) # adds tuple to record list
-        print(dict(record))
         # get name of option from dict(record)['mic']
         graph_json = graphs.show_graph(dict(record)['mic'])
         graphs.get_historical(dict(record)['mic']) # create historical CSV file
@@ -160,36 +157,28 @@ def forecasts():
     forecast = graphs.forecast_lstm(mic, "1y")
     graph_json = forecast[0] # default to showing past year with one month of predictions
     csv = graphs.get_csv(forecast[1]) # generate CSV file
-    print(csv)
     return render_template('forecasts.html', name=mic, graph=graph_json, csv=csv) # renders template with MIC, graph JSON and CSV file
 
 @app.route('/stock_favourites', methods=['POST'])
 def stock_favourites():
     data = request.get_json() # get JSON-parsed data from POST request
-    print(data) # for debugging purposes
     is_favourite = Favourites.query.filter_by(user_id=data['user_id'], company_id=data['company_id']).first()
     if not is_favourite: # check if already in favourites
         new_favourite = Favourites(user_id=data['user_id'], company_id=data['company_id'])
         db.session.add(new_favourite) # add entry to database
         db.session.commit() # data persists
-        print("favourite added")
         return {'msg': 'Added to Favourites'}
     else:
-        print("already in favourites")
         return {'msg': 'Already in Favourites'}
     
 @app.route('/news')
 def news():
     top_headlines = api.get_top_headlines(category='business') # gets articles with "business" tag
-    #print(len(top_headlines['articles'])) # prints number of articles fetched from API
     if len(top_headlines['articles']) < 6:
-        print("random.choices() used") # debugging, remove in prod
         articles = top_headlines['articles'] + random.choices(top_headlines['articles'], k=(6 - len(top_headlines['articles']))) # displays all articles and randomly selects with replacement
     else:
-        print("random.sample() used") # debugging, remove in prod
         articles = random.sample(top_headlines['articles'], 6) # randomly selects 6 articles without replacement
     for i in range(len(articles)): # for improved terminal output readability
-        print(articles[i])
     return render_template('news.html', articles=articles) # rendering template
 
 @app.route('/favourites')

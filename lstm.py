@@ -66,7 +66,6 @@ def forecast_lstm(stock, period):
     future['Historical'] = np.nan
 
     results = pd.concat([past, future], ignore_index=True) # appends datasets together
-    print(results) # for debugging
 
     # graph
     fig = go.Figure()
